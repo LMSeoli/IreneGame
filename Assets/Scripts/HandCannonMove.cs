@@ -31,7 +31,7 @@ public class HandCannonMove : MonoBehaviour
         CancelInvokeLog("disable");
         PlaySound("Shot");
         spriteRenderer.flipY = dir;
-        transform.position = new Vector2(Player.transform.position.x + (dir?-0.5f:0.5f), Player.transform.position.y);
+        transform.position = new Vector2(Player.transform.position.x + (dir?-0.4f:0.4f), Player.transform.position.y);
         transform.rotation = Quaternion.Euler(0,0,dir?180:0);
 
         GameObject bullet = Instantiate(bulletObject, transform.position, transform.rotation);  //각도도 맞춰진다?!!
