@@ -57,6 +57,7 @@ public class S3Attack : MonoBehaviour
         }
     }
 
+    //적이 범위에서 벗어난다면 타겟을 해제해야 하지만, 그럴 경우가 적기도 하고 굳이 그럴 필요도 없기 때문에 배제. 사실 버그때매 그럼
     /*private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("enemy"))
@@ -104,7 +105,7 @@ public class S3Attack : MonoBehaviour
                 yield return new WaitForSeconds(ShootTime);
                 continue;
             }
-            E1Move AttackTargetMove = AttackTarget.GetComponent<E1Move>();
+            EnemyBasicMove AttackTargetMove = AttackTarget.GetComponent<EnemyBasicMove>();
             if (AttackTargetMove == null)
             {
                 Debug.LogWarning("AttackTargetMove is null. Skipping this target.");

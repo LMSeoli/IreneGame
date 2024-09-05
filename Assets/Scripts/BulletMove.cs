@@ -63,7 +63,7 @@ public class BulletMove : MonoBehaviour
 
     void EnemyHit(Transform enemy)
     {
-        E1Move enemyMove = enemy.GetComponent<E1Move>();
+        EnemyBasicMove enemyMove = enemy.GetComponent<EnemyBasicMove>();
         enemyMove.OnDamaged(player.transform.position);
     }
 

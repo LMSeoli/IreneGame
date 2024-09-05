@@ -335,7 +335,7 @@ public class PlayerMove : MonoBehaviour
     void S2EnemyStrike(Transform enemy)
     {
         int direction = spriteRenderer.flipX ? -1 : 1;
-        E1Move enemyMove = enemy.GetComponent<E1Move>();
+        EnemyBasicMove enemyMove = enemy.GetComponent<EnemyBasicMove>();
         enemyMove.S2Hit(S2End, direction, handCannonMove.S2ShootDelay);
     }
 

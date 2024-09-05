@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 51601045}
   - component: {fileID: 51601044}
   - component: {fileID: 51601043}
+  - component: {fileID: 51601049}
   m_Layer: 6
   m_Name: enemy
   m_TagString: enemy
@@ -290,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 100
+  health: 3
   isHit: 0
   noMove: 0
   S3Airbone: {fileID: 1804222084}
@@ -445,6 +446,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1571479734}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &51601049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51601042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 10
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &56777089
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,6 +748,7 @@ GameObject:
   - component: {fileID: 97748414}
   - component: {fileID: 97748413}
   - component: {fileID: 97748412}
+  - component: {fileID: 97748418}
   - component: {fileID: 97748417}
   m_Layer: 6
   m_Name: enemy (4)
@@ -923,6 +943,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &97748418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97748410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &144056275
 GameObject:
   m_ObjectHideFlags: 0
@@ -937,6 +975,7 @@ GameObject:
   - component: {fileID: 144056279}
   - component: {fileID: 144056278}
   - component: {fileID: 144056277}
+  - component: {fileID: 144056283}
   - component: {fileID: 144056282}
   m_Layer: 6
   m_Name: enemy (3)
@@ -973,7 +1012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -1126,11 +1165,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 0
+  health: 3
   isHit: 0
-  noMove: 0
+  noMove: 1
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &144056283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144056275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &161771025
 GameObject:
   m_ObjectHideFlags: 0
@@ -1342,7 +1399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShootType: 0
   NormalShotSpeed: 60
-  S2ShotSpeed: 80
+  S2ShotSpeed: 100
   player: {fileID: 836414634}
 --- !u!50 &176652990
 Rigidbody2D:
@@ -1956,7 +2013,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e3fd75ab5301f98439b669fb18c5c738, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 46d95398c2f9975459fccba0af3b39ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2007,6 +2064,7 @@ GameObject:
   - component: {fileID: 307169963}
   - component: {fileID: 307169962}
   - component: {fileID: 307169961}
+  - component: {fileID: 307169967}
   - component: {fileID: 307169966}
   m_Layer: 6
   m_Name: enemy (5)
@@ -2201,6 +2259,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &307169967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 307169959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &320653021
 GameObject:
   m_ObjectHideFlags: 0
@@ -2215,6 +2291,7 @@ GameObject:
   - component: {fileID: 320653025}
   - component: {fileID: 320653024}
   - component: {fileID: 320653023}
+  - component: {fileID: 320653029}
   - component: {fileID: 320653028}
   m_Layer: 6
   m_Name: enemy
@@ -2251,7 +2328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -2409,6 +2486,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &320653029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 320653021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &334948645
 GameObject:
   m_ObjectHideFlags: 0
@@ -2423,6 +2518,7 @@ GameObject:
   - component: {fileID: 334948649}
   - component: {fileID: 334948648}
   - component: {fileID: 334948647}
+  - component: {fileID: 334948653}
   - component: {fileID: 334948652}
   m_Layer: 6
   m_Name: enemy (3)
@@ -2459,7 +2555,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -2617,6 +2713,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &334948653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334948645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &380099622
 GameObject:
   m_ObjectHideFlags: 0
@@ -5947,6 +6061,7 @@ GameObject:
   - component: {fileID: 448082547}
   - component: {fileID: 448082546}
   - component: {fileID: 448082545}
+  - component: {fileID: 448082551}
   - component: {fileID: 448082550}
   m_Layer: 6
   m_Name: enemy
@@ -5983,7 +6098,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -6136,11 +6251,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 0
+  health: 3
   isHit: 0
-  noMove: 0
+  noMove: 1
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &448082551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448082543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &461479768
 GameObject:
   m_ObjectHideFlags: 0
@@ -6291,6 +6424,7 @@ GameObject:
   - component: {fileID: 493513476}
   - component: {fileID: 493513475}
   - component: {fileID: 493513474}
+  - component: {fileID: 493513480}
   - component: {fileID: 493513479}
   m_Layer: 6
   m_Name: enemy (4)
@@ -6327,7 +6461,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -6485,6 +6619,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &493513480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493513472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &500715971
 GameObject:
   m_ObjectHideFlags: 0
@@ -6499,6 +6651,7 @@ GameObject:
   - component: {fileID: 500715975}
   - component: {fileID: 500715974}
   - component: {fileID: 500715973}
+  - component: {fileID: 500715979}
   - component: {fileID: 500715978}
   m_Layer: 6
   m_Name: enemy (4)
@@ -6535,7 +6688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -6688,11 +6841,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 0
+  health: 3
   isHit: 0
-  noMove: 0
+  noMove: 1
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &500715979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500715971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -6964,6 +7135,7 @@ GameObject:
   - component: {fileID: 550743464}
   - component: {fileID: 550743463}
   - component: {fileID: 550743462}
+  - component: {fileID: 550743468}
   - component: {fileID: 550743467}
   m_Layer: 6
   m_Name: enemy
@@ -7158,6 +7330,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &550743468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 550743460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &561362440
 GameObject:
   m_ObjectHideFlags: 0
@@ -7654,6 +7844,7 @@ GameObject:
   - component: {fileID: 701559142}
   - component: {fileID: 701559141}
   - component: {fileID: 701559140}
+  - component: {fileID: 701559146}
   - component: {fileID: 701559145}
   m_Layer: 6
   m_Name: enemy (2)
@@ -7848,6 +8039,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &701559146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701559138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &704191719
 GameObject:
   m_ObjectHideFlags: 0
@@ -7862,6 +8071,7 @@ GameObject:
   - component: {fileID: 704191723}
   - component: {fileID: 704191722}
   - component: {fileID: 704191721}
+  - component: {fileID: 704191727}
   - component: {fileID: 704191726}
   m_Layer: 6
   m_Name: enemy (5)
@@ -7898,7 +8108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -8051,11 +8261,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 0
+  health: 3
   isHit: 0
-  noMove: 0
+  noMove: 1
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &704191727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 704191719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &705818626
 GameObject:
   m_ObjectHideFlags: 0
@@ -9531,6 +9759,7 @@ GameObject:
   - component: {fileID: 884459303}
   - component: {fileID: 884459302}
   - component: {fileID: 884459301}
+  - component: {fileID: 884459308}
   - component: {fileID: 884459307}
   m_Layer: 6
   m_Name: enemy (2)
@@ -9552,7 +9781,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 100
+  health: 3
   isHit: 0
   noMove: 0
   S3Airbone: {fileID: 1804222084}
@@ -9725,6 +9954,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &884459308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884459300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 10
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &913043383
 GameObject:
   m_ObjectHideFlags: 0
@@ -9814,6 +10061,7 @@ GameObject:
   - component: {fileID: 945983473}
   - component: {fileID: 945983472}
   - component: {fileID: 945983471}
+  - component: {fileID: 945983477}
   - component: {fileID: 945983476}
   m_Layer: 6
   m_Name: enemy (1)
@@ -10008,6 +10256,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &945983477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945983469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &971854466
 GameObject:
   m_ObjectHideFlags: 0
@@ -13142,6 +13408,7 @@ GameObject:
   - component: {fileID: 1063566438}
   - component: {fileID: 1063566442}
   - component: {fileID: 1063566443}
+  - component: {fileID: 1063566445}
   - component: {fileID: 1063566444}
   m_Layer: 6
   m_Name: enemy
@@ -13336,6 +13603,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1063566445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063566437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1079820443
 GameObject:
   m_ObjectHideFlags: 0
@@ -13350,6 +13635,7 @@ GameObject:
   - component: {fileID: 1079820447}
   - component: {fileID: 1079820446}
   - component: {fileID: 1079820445}
+  - component: {fileID: 1079820451}
   - component: {fileID: 1079820450}
   m_Layer: 6
   m_Name: enemy (1)
@@ -13386,7 +13672,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -13544,6 +13830,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1079820451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079820443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1111744575
 GameObject:
   m_ObjectHideFlags: 0
@@ -13816,6 +14120,7 @@ GameObject:
   - component: {fileID: 1123086707}
   - component: {fileID: 1123086706}
   - component: {fileID: 1123086705}
+  - component: {fileID: 1123086711}
   - component: {fileID: 1123086710}
   m_Layer: 6
   m_Name: enemy (1)
@@ -13852,7 +14157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -14005,11 +14310,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 0
+  health: 3
   isHit: 0
-  noMove: 0
+  noMove: 1
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1123086711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123086703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1132678883
 GameObject:
   m_ObjectHideFlags: 0
@@ -14251,6 +14574,7 @@ GameObject:
   - component: {fileID: 1147419549}
   - component: {fileID: 1147419548}
   - component: {fileID: 1147419547}
+  - component: {fileID: 1147419553}
   - component: {fileID: 1147419552}
   m_Layer: 6
   m_Name: enemy
@@ -14287,7 +14611,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 100
+  health: 3
   isHit: 0
   noMove: 0
   S3Airbone: {fileID: 1804222084}
@@ -14445,6 +14769,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1147419553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1147419545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 10
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1147742545
 GameObject:
   m_ObjectHideFlags: 0
@@ -18169,6 +18511,7 @@ GameObject:
   - component: {fileID: 1162040076}
   - component: {fileID: 1162040075}
   - component: {fileID: 1162040074}
+  - component: {fileID: 1162040080}
   - component: {fileID: 1162040079}
   m_Layer: 6
   m_Name: enemy (1)
@@ -18363,6 +18706,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1162040080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162040072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1192535933
 GameObject:
   m_ObjectHideFlags: 0
@@ -18990,7 +19351,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e3fd75ab5301f98439b669fb18c5c738, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 46d95398c2f9975459fccba0af3b39ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -19678,7 +20039,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e3fd75ab5301f98439b669fb18c5c738, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 46d95398c2f9975459fccba0af3b39ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -20013,6 +20374,7 @@ GameObject:
   - component: {fileID: 1566610462}
   - component: {fileID: 1566610461}
   - component: {fileID: 1566610460}
+  - component: {fileID: 1566610466}
   - component: {fileID: 1566610465}
   m_Layer: 6
   m_Name: enemy (2)
@@ -20049,7 +20411,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -20207,6 +20569,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1566610466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1566610458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1571479733
 GameObject:
   m_ObjectHideFlags: 0
@@ -20372,6 +20752,7 @@ GameObject:
   - component: {fileID: 1609682996}
   - component: {fileID: 1609682995}
   - component: {fileID: 1609682994}
+  - component: {fileID: 1609683000}
   - component: {fileID: 1609682999}
   m_Layer: 6
   m_Name: enemy
@@ -20566,6 +20947,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1609683000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609682992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1611125998
 GameObject:
   m_ObjectHideFlags: 0
@@ -22084,6 +22483,7 @@ GameObject:
   - component: {fileID: 1748975464}
   - component: {fileID: 1748975463}
   - component: {fileID: 1748975462}
+  - component: {fileID: 1748975468}
   - component: {fileID: 1748975467}
   m_Layer: 6
   m_Name: enemy (3)
@@ -22278,6 +22678,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1748975468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748975460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1749000301
 GameObject:
   m_ObjectHideFlags: 0
@@ -24177,6 +24595,7 @@ GameObject:
   - component: {fileID: 1796130299}
   - component: {fileID: 1796130298}
   - component: {fileID: 1796130297}
+  - component: {fileID: 1796130303}
   - component: {fileID: 1796130302}
   m_Layer: 6
   m_Name: enemy (5)
@@ -24213,7 +24632,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -24371,6 +24790,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1796130303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796130295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1804222084
 GameObject:
   m_ObjectHideFlags: 0
@@ -25349,6 +25786,7 @@ GameObject:
   - component: {fileID: 1907180170}
   - component: {fileID: 1907180169}
   - component: {fileID: 1907180168}
+  - component: {fileID: 1907180175}
   - component: {fileID: 1907180174}
   m_Layer: 6
   m_Name: enemy (1)
@@ -25370,7 +25808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 100
+  health: 3
   isHit: 0
   noMove: 0
   S3Airbone: {fileID: 1804222084}
@@ -25543,6 +25981,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &1907180175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907180167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 10
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &1933509179
 GameObject:
   m_ObjectHideFlags: 0
@@ -33542,6 +33998,7 @@ GameObject:
   - component: {fileID: 2042535318}
   - component: {fileID: 2042535317}
   - component: {fileID: 2042535316}
+  - component: {fileID: 2042535322}
   - component: {fileID: 2042535321}
   m_Layer: 6
   m_Name: enemy (2)
@@ -33578,7 +34035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 1
+  health: 3
   isHit: 0
   noMove: 1
   S3Airbone: {fileID: 1804222084}
@@ -33731,11 +34188,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextmove: 0
-  health: 0
+  health: 3
   isHit: 0
-  noMove: 0
+  noMove: 1
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &2042535322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2042535314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &2049018055
 GameObject:
   m_ObjectHideFlags: 0
@@ -34034,6 +34509,7 @@ GameObject:
   - component: {fileID: 2094085912}
   - component: {fileID: 2094085911}
   - component: {fileID: 2094085910}
+  - component: {fileID: 2094085916}
   - component: {fileID: 2094085915}
   m_Layer: 6
   m_Name: enemy (1)
@@ -34228,6 +34704,24 @@ MonoBehaviour:
   noMove: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
+--- !u!114 &2094085916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094085908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aaa65b187e2075489ace7ef3a2af869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextmove: 0
+  health: 3
+  isHit: 0
+  noMove: 0
+  S3Airbone: {fileID: 1804222084}
+  S3AttackArea: {fileID: 879520056}
 --- !u!1 &2116782565
 GameObject:
   m_ObjectHideFlags: 0
