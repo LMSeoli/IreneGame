@@ -85,6 +85,7 @@ public class S3Attack : MonoBehaviour
         {
             Debug.Log("Entering while loop. ShootNumber: " + ShootNumber + ", TargetsCount: " + targets.Count);
 
+            //debug
             if (targets.Count <= 0)
             {
                 Debug.Log("No targets available");
@@ -93,11 +94,13 @@ public class S3Attack : MonoBehaviour
                 continue;
             }
 
+            //타겟 설정
             GameObject[] targetArray = new GameObject[targets.Count];
             targets.CopyTo(targetArray);
             Debug.Log("Target array size: " + targetArray.Length);
             GameObject AttackTarget = targetArray[Random.Range(0, targetArray.Length)];
 
+            //debug
             if (AttackTarget == null)
             {
                 Debug.LogWarning("AttackTarget is null. Skipping this target.");

@@ -42,6 +42,9 @@ public class EnemyBasicMove : MonoBehaviour
 
     public void OnDamaged(Vector3 player)
     {
+        //화면 진동 효과와
+        //특수 피격 이펙트가 필요함
+
         CancelInvoke("NotHit");
         CancelInvoke("Return");
         isHit = true;
@@ -106,20 +109,13 @@ public class EnemyBasicMove : MonoBehaviour
 
     public void S2Hit(Vector3 S2End, int direction, float ShootDelay)
     {
-        ShootDelay += 0.07f;        //평균적 딜레이
+        //ShootDelay += 0.07f;        //평균적 딜레이
         CancelInvoke("NotHit");
-        gameObject.layer = 12;
+        //gameObject.layer = 12;        //현재는 playermove에서 처리
         isHit = true;
         rigid.velocity = Vector2.zero;
         Vector3 TS = this.gameObject.transform.position;
-        //S2시작지점과 끝지점의 거리를 5.75라 가정.
-        //끝지점과 매우 가깝다면 밀친다.
-        /*if (Mathf.Abs(TS.x - S2End.x)<=0.75)
-        {
-            S2Push(S2End);
-        }
-        else
-        {*/
+
         float gravity = 12;     //현재 중력을 12로 설정해둠
                                 //끝지점과 처음 지점의y+5.75부분을 이은 직선을 구함.
                                 //chatgpt의 힘으로 0.5초후에 내려오며 도착하는 식 작성
@@ -138,7 +134,7 @@ public class EnemyBasicMove : MonoBehaviour
         rigid.velocity = new Vector2(0, verticalVelocity);
 
         // 직접 메서드 호출
-        Invoke("Return", 0.3f);
+        Invoke("Return", 2f);
         Invoke("NotHit", 2f);
         //}
     }

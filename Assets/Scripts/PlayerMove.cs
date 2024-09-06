@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -43,6 +44,7 @@ public class PlayerMove : MonoBehaviour
     public Vector3 S2Start;
     public Vector3 S2End;
     public GameObject HandCannon;
+    public GameObject Sword;
     public GameObject S3Airbone;
     public GameObject S3AttackArea;
 
@@ -63,7 +65,7 @@ public class PlayerMove : MonoBehaviour
         anim = GetComponent<Animator>();  // Animator 컴포넌트 초기화
         audioSource = GetComponent<AudioSource>();
         handCannonMove = HandCannon.GetComponent<HandCannonMove>();
-        swordMove = GetComponent<SwordMove>();
+        swordMove = Sword.GetComponent<SwordMove>();
     }
 
     //단발적인 입력은 여기에!!
@@ -83,14 +85,6 @@ public class PlayerMove : MonoBehaviour
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.01f, rigid.velocity.y); //float끼리 곱할 때는 마지막에 f 붙여주기!!
         }
 
-        //Normal Shot
-        if (Input.GetKeyDown(KeyCode.Z) && isSkill == false && isReload == false && !HandCannon.activeSelf && gameManager.bullet > 0)
-        {
-            HandCannon.SetActive(true);
-            gameManager.BulletDown();
-            handCannonMove.Shot(spriteRenderer.flipX);
-        }
-
         //Reload
         if (Input.GetKeyDown(KeyCode.R) && isSkill == false && isReload == false && gameManager.bullet < 6)
         {
@@ -99,21 +93,76 @@ public class PlayerMove : MonoBehaviour
             gameManager.StartCoroutine(gameManager.Reload());
         }
 
-        //Skill1
-        if (Input.GetKeyDown(KeyCode.S) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && S1CoolTime <= 0 && gameManager.bullet > 0)
+        //Dash
+        if ((Input.GetKeyDown(KeyCode.LeftShift)||Input.GetKeyDown(KeyCode.RightShift)) && isSkill == false && isReload == false)
         {
-            HandCannon.SetActive(true);
-            gameManager.BulletDown();
-            isSkill = true;
-            StartCoroutine(Skill_1());
+            //잔상 이펙트를 가진
+            //대시 구현해야댐!!
         }
 
-        //Skill 2
+        //Z_Press
+        if (Input.GetKeyDown(KeyCode.Z) && isSkill == false && isReload == false)
+        {
+            if (anim.GetBool("isJumping") == true)
+            {
+                if (Input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    //아래로
+
+                    //휘두르면서 90도 돌리고
+
+                    //내려찍기
+                }
+                else if (Input.GetKeyDown(KeyCode.UpArrow))
+                {
+                    //위로 베기
+                }
+                else if (Input.GetAxisRaw("Horizontal") != 0)
+                {
+                    //옆으로 베기
+                }
+                else if (!HandCannon.activeSelf && gameManager.bullet > 0)
+                {
+                    //가까운 적에게 발사
+                }
+            }
+            else
+            {
+                if (Input.GetAxisRaw("Horizontal") != 0 && !HandCannon.activeSelf && gameManager.bullet > 0)
+                {
+                    HandCannon.SetActive(true);
+                    gameManager.BulletDown();
+                    handCannonMove.Shot(spriteRenderer.flipX);
+                }
+                else if (Input.GetKeyDown(KeyCode.UpArrow))
+                {
+                    //위로 베기
+                }
+                else
+                {
+                    //전방으로 살짝 돌진하며 찌르기
+                }
+            }
+        }
+
+        //X_Press
         if (Input.GetKeyDown(KeyCode.X) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && S2CoolTime <= 0 && gameManager.bullet > 0)
         {
-            isSkill = true;
-            gameManager.BulletDown();
-            StartCoroutine(Skill_2());
+            //Skill1
+            if (Input.GetKey(KeyCode.UpArrow) && S1CoolTime <= 0)
+            {
+                HandCannon.SetActive(true);
+                gameManager.BulletDown();
+                isSkill = true;
+                StartCoroutine(Skill_1());
+            }
+            //Skill 2
+            else
+            {
+                isSkill = true;
+                gameManager.BulletDown();
+                StartCoroutine(Skill_2());
+            }
         }
 
         //Skill_3
@@ -196,7 +245,10 @@ public class PlayerMove : MonoBehaviour
                     OnAttack(collision.transform);
                 }
                 else*/
+                collision.gameObject.layer = 12;
+                collision.rigidbody.velocity = Vector2.zero;
                 S2EnemyStrike(collision.transform);
+                //Physics2D.IgnoreCollision(collision.collider, capsuleCollider, false);
             }
             else
             {
@@ -237,42 +289,74 @@ public class PlayerMove : MonoBehaviour
         isSkill = false;
     }
 
+    /* private IEnumerator Skill_2()
+     {
+         //float originalMaxSpeed = maxSpeed;
+         S2Start = this.gameObject.transform.position;
+         S2STCount = 0;
+         //maxSpeed = S2Speed;
+
+         capsuleCollider.direction = CapsuleDirection2D.Horizontal;
+         capsuleCollider.size = new Vector2(1, 0.5f);
+
+         int direction = spriteRenderer.flipX ? -1 : 1;
+         S2End = new Vector3(transform.position.x + direction * 6.14f, transform.position.y);    //기본 이동거리가 5.75라 가정할 때, 스프라이트의 크기를 고려하여 0.39f는 추가해야 함
+         //direction 방향으로 거리 5의 레이를 발사하고 충돌하는 플랫폼이 존재한다면 그 사이의 거리만큼 이동해야함. 
+         // 위아래에서 전방으로 레이를 발사함.
+          //맞는 게 없다면 그대로.
+         //맞았는데 위와 아래의 값이 거의 동일하다면(벽이라면) 그 직전까지만 이동함
+          //맞았는데 위와 아래의 값이 1만큼 차이난다면(오르막길이라면) 어떻게 해야? 멈추는 건 또 맛이 없으니까 이건 안맞더라도 그대로?
+          //이건 모두 구현한 다음에 만드는거로
+         //float targetPosition = S2Start.x + 5 * direction;
+
+         S2STCount = 0;  // 이동 시간 초기화
+
+         while (Mathf.Abs(transform.position.x - S2Start.x) < 5f)   // 5만큼 이동
+         {
+             rigid.velocity = new Vector2(maxSpeed * direction, 0);  // 계속해서 속도를 유지하며 이동
+             S2STCount += Time.deltaTime;
+
+             yield return null;
+         }
+         Debug.Log("걸린시간:" + S2STCount);
+         Debug.Log("이동거리:" + (transform.position.x - S2Start.x));
+
+         capsuleCollider.size = new Vector2(0.77f, 1);
+         maxSpeed = originalMaxSpeed;
+         rigid.velocity = Vector2.zero;
+         HandCannon.SetActive(true);     //보험
+         handCannonMove.S2Shoot(S2End, spriteRenderer.flipX);
+         //isS2는 HandCannon에서 끌거임
+     }*/
+
     private IEnumerator Skill_2()
     {
-        float originalMaxSpeed = maxSpeed;
-        S2Start = this.gameObject.transform.position;
-        S2STCount = 0;
-        maxSpeed = S2Speed;
+        float distanceToMove = 5.75f;  // 이동할 총 거리
+        float moveDuration = 0.1f;     // 이동하는데 걸릴 시간 (일단 0.1초)
+        float elapsedTime = 0f;
 
-        capsuleCollider.size = new Vector2(1, 0.5f);
+        S2Start = transform.position;
+        S2End = S2Start + new Vector3(spriteRenderer.flipX ? -distanceToMove : distanceToMove, 0, 0);  // 방향에 따른 이동 목표
 
-        int direction = spriteRenderer.flipX ? -1 : 1;
-        S2End = new Vector3(transform.position.x + direction * 6.14f, transform.position.y);    //기본 이동거리가 5.75라 가정할 때, 스프라이트의 크기를 고려하여 0.39f는 추가해야 함
-        /*direction 방향으로 거리 5의 레이를 발사하고 충돌하는 플랫폼이 존재한다면 그 사이의 거리만큼 이동해야함. 
-         *위아래에서 전방으로 레이를 발사함.
-         *맞는 게 없다면 그대로.
-         *맞았는데 위와 아래의 값이 거의 동일하다면(벽이라면) 그 직전까지만 이동함
-         *맞았는데 위와 아래의 값이 1만큼 차이난다면(오르막길이라면) 어떻게 해야? 멈추는 건 또 맛이 없으니까 이건 안맞더라도 그대로?
-         *이건 모두 구현한 다음에 만드는거로*/
-        float targetPosition = S2Start.x + 5 * direction;
+        capsuleCollider.direction = CapsuleDirection2D.Horizontal;
+        capsuleCollider.size = new Vector2(1, 0.5f);  // 캡슐 충돌체 사이즈 변경
 
-        S2STCount = 0;
-        while (Mathf.Abs(transform.position.x - S2Start.x) < 4.5)   //이러면 약 4.75만큼 이동함
+        // 시간 경과에 따라 거리를 일정 비율로 이동
+        while (elapsedTime < moveDuration)
         {
-            rigid.velocity = new Vector2(maxSpeed * direction, 0);
-            //Debug.Log(Time.deltaTime);
-            S2STCount += Time.deltaTime;
-            if (S2STCount >= 0.1) break;
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / moveDuration;  // 현재 시간에 따른 비율 (0~1)
+            transform.position = Vector3.Lerp(S2Start, S2End, t);  // 시작 지점에서 목표 지점까지 점진적으로 이동
             yield return null;
         }
-        Debug.Log(S2STCount);
+        Debug.Log("이동거리 : "+ Mathf.Abs(S2Start.x - transform.position.x));
 
+        // 이동이 끝난 후 캡슐 충돌체 원래 크기로 복구
         capsuleCollider.size = new Vector2(0.77f, 1);
-        maxSpeed = originalMaxSpeed;
         rigid.velocity = Vector2.zero;
-        HandCannon.SetActive(true);     //보험
+
+        HandCannon.SetActive(true);  // HandCannon 활성화
         handCannonMove.S2Shoot(S2End, spriteRenderer.flipX);
-        //isS2는 HandCannon에서 끌거임
     }
 
     private IEnumerator Skill_3()
@@ -317,9 +401,11 @@ public class PlayerMove : MonoBehaviour
 
         while (Time.time - S3time < 1.7f)
         {
+            //0.1333초마다 잠시 대상을 바라보는 코드를 넣거나, 중간에 여러 방향을 바라보게 하는 코드를 넣는것도 좋을 거 같음.
             transform.rotation = Quaternion.Euler(0, (Time.time - S3time) * 360 * 12, 0);
             yield return null;
         }
+
         S3AttackArea.SetActive(false);
         transform.rotation = Quaternion.Euler(0, 0, 0);
         S3time = Time.time;

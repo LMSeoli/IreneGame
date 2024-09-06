@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     {
         cameraMove = GameCamera.GetComponent<CameraMove>();
         audioSource = gameObject.GetComponent<AudioSource>();
-        PlaySound("BackSong1");
+        //PlaySound("BackSong1");
     }
 
     private void Update()

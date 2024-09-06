@@ -89,8 +89,8 @@ public class HandCannonMove : MonoBehaviour
         CancelInvokeLog("disable");
         spriteRenderer.flipY = !dir;
         transform.rotation = Quaternion.Euler(0, 0, dir ? 45 : 135);
-        Invoke("disable", 2.1f);
-        StartCoroutine(S3EndRotation());
+        Invoke("disable", 2.2f);
+        StartCoroutine(S3EndRotation(dir));
     }
 
     public IEnumerator S3ShootMove(GameObject AttackTarget)
@@ -105,17 +105,19 @@ public class HandCannonMove : MonoBehaviour
         }
     }
 
-    private IEnumerator S3EndRotation()
+    private IEnumerator S3EndRotation(bool dir)
     {
         Debug.Log("S3EndRotation started");
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1.7f);
+        spriteRenderer.flipY = dir;
         float S3time = Time.time;
-        while (Time.time - S3time < 0.4f)
+        while (Time.time - S3time < 0.3f)
         {
-            float deltaRotation = (Time.time - S3time) * 8;
+            float deltaRotation = (Time.time - S3time)*1800;
             transform.Rotate(0, 0, deltaRotation);
             yield return null;
         }
+        transform.rotation = Quaternion.Euler(0, 0, dir ? 225 : -45);
         Debug.Log("S3EndRotation complete");
     }
 
