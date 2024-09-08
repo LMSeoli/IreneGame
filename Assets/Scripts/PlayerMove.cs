@@ -107,6 +107,7 @@ public class PlayerMove : MonoBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
+                    swordMove.StartCoroutine(swordMove.NormalSlash());
                     //아래로
 
                     //휘두르면서 90도 돌리고
@@ -119,7 +120,9 @@ public class PlayerMove : MonoBehaviour
                 }
                 else if (Input.GetAxisRaw("Horizontal") != 0)
                 {
-                    //옆으로 베기
+                    //일반 베기
+
+
                 }
                 else if (!HandCannon.activeSelf && gameManager.bullet > 0)
                 {
