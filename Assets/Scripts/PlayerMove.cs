@@ -107,7 +107,6 @@ public class PlayerMove : MonoBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
-                    swordMove.StartCoroutine(swordMove.NormalSlash());
                     //아래로
 
                     //휘두르면서 90도 돌리고
@@ -121,9 +120,10 @@ public class PlayerMove : MonoBehaviour
                 else if (Input.GetAxisRaw("Horizontal") != 0)
                 {
                     //일반 베기
-
-
+                    isSkill = true;
+                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
                 }
+                //아무것도 안 누르고 z만 누른 상태라면
                 else if (!HandCannon.activeSelf && gameManager.bullet > 0)
                 {
                     //가까운 적에게 발사
