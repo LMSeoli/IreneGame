@@ -38,6 +38,10 @@ public class EnemyBasicMove : MonoBehaviour
         {
             StartCoroutine(S3Hit(collision.gameObject.transform));
         }
+        if (collision.gameObject.layer == 16)
+        {
+            OnDamaged(collision.transform.position);
+        }
     }
 
     public void OnDamaged(Vector3 player)

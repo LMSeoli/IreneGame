@@ -19,8 +19,6 @@ public class SwordMove : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-
-
     public IEnumerator NormalSlash(bool dir)
     {
         spriteRenderer.enabled = true;

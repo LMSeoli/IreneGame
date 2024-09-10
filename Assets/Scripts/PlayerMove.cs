@@ -143,6 +143,9 @@ public class PlayerMove : MonoBehaviour
                 }
                 else
                 {
+                    //임시
+                    isSkill = true;
+                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
                     //전방으로 살짝 돌진하며 찌르기
                 }
             }
