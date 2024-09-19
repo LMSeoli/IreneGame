@@ -12,12 +12,14 @@ public class S3Attack : MonoBehaviour
     private HandCannonMove handCannonMove;
     Collider2D col;
     PlayerMove playerMove;
+    GameManager gameManager;
 
     private void Awake()
     {
         handCannonMove = HandCannon.GetComponent<HandCannonMove>();
         col = GetComponent<Collider2D>();
         playerMove = FindObjectOfType<PlayerMove>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void OnEnable()
@@ -81,6 +83,7 @@ public class S3Attack : MonoBehaviour
         Debug.Log("ShootNumber: " + ShootNumber);
         Debug.Log("ShootTime: " + ShootTime);
 
+        //ShootNumber이 0이 될 때까지 지속함
         while (ShootNumber > 0)
         {
             Debug.Log("Entering while loop. ShootNumber: " + ShootNumber + ", TargetsCount: " + targets.Count);

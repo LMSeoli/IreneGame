@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     {
         cameraMove = GameCamera.GetComponent<CameraMove>();
         audioSource = gameObject.GetComponent<AudioSource>();
+        player = FindObjectOfType<PlayerMove>();
         //PlaySound("BackSong1");
     }
 
@@ -86,6 +87,24 @@ public class GameManager : MonoBehaviour
     {
         bullet--;
         UIBullet[bullet].color = new Color(1, 1, 1, 0);
+    }
+
+    public void S3CountUp()
+    {
+        //S3Count가 최대가 아니라면 높임
+        if (player.S3Count < 16)
+        {
+            player.S3Count++;
+
+            //ui에서도 채워지게
+        }
+        
+        //3스 게이지 인터페이스 제작해야댐
+    }
+    public void S3CountDown()
+    {
+        player.S3Count=0;
+        //ui에서 게이지 1개씩 소모
     }
 
     public IEnumerator Reload()

@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using Color = UnityEngine.Color;
+
 
 public class PlayerMove : MonoBehaviour
 {
@@ -25,12 +27,14 @@ public class PlayerMove : MonoBehaviour
 
     public float maxSpeed;  //얘네는 유니티쪽에서 설정 가능!
     public float jumpPower;
+    public float NSCoolTime;
+    public float NSCoolTime_max;
     public float S1CoolTime;
     public float S1CoolTime_max;
     public float S2CoolTime;
     public float S2CoolTime_max;
-    public float S3CoolTime;
-    public float S3CoolTime_max;
+    public float S3Count;
+    public float S3Count_max;
     public float AttackType;                //0이라면 총, 1이라면 칼
     public bool isReload = false;
     //public bool isS1 = false;
@@ -39,7 +43,7 @@ public class PlayerMove : MonoBehaviour
     public bool isSkill = false;
     public float S2Speed;
     public float S2STCount;
-    public float S3time;
+    public float S3Time;
 
     public Vector3 S2Start;
     public Vector3 S2End;
@@ -47,6 +51,11 @@ public class PlayerMove : MonoBehaviour
     public GameObject Sword;
     public GameObject S3Airbone;
     public GameObject S3AttackArea;
+    public Transform NSPos;
+    public Vector2 NSBoxSize;
+    public Transform HSPos;
+    public float HSRadius;
+    public float HSAngle;
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
@@ -86,7 +95,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         //Reload
-        if (Input.GetKeyDown(KeyCode.R) && isSkill == false && isReload == false && gameManager.bullet < 6)
+        if (Input.GetKeyDown(KeyCode.R) && NSCoolTime <= 0 && isSkill == false && isReload == false && gameManager.bullet < 6)
         {
             Debug.Log("Reload?");
             isReload = true;
@@ -105,48 +114,79 @@ public class PlayerMove : MonoBehaviour
         {
             if (anim.GetBool("isJumping") == true)
             {
-                if (Input.GetKeyDown(KeyCode.DownArrow))
+                if (Input.GetKey(KeyCode.DownArrow) && NSCoolTime <= 0)
                 {
-                    //아래로
+                    //아래로 휘두르면서
+                    isSkill = true;
+                    StartCoroutine(DetectHSOverTime(Vector2.down, 0.3f));
+                    anim.SetBool("NormalSlash", true);
+                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    NSCoolTime = NSCoolTime_max;
 
-                    //휘두르면서 90도 돌리고
+                    //90도 돌리고 (구현 안해도 될 듯)
 
-                    //내려찍기
+                    //내려찍기 (구현 안해도 될 듯)
                 }
-                else if (Input.GetKeyDown(KeyCode.UpArrow))
+                else if (Input.GetKey(KeyCode.UpArrow) && NSCoolTime <= 0)
                 {
                     //위로 베기
+                    isSkill = true;
+                    StartCoroutine(DetectHSOverTime(Vector2.up, 0.3f));
+                    anim.SetBool("NormalSlash", true);
+                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    NSCoolTime = NSCoolTime_max;
                 }
-                else if (Input.GetAxisRaw("Horizontal") != 0)
+                else if (Input.GetAxisRaw("Horizontal") != 0 && NSCoolTime <= 0)
                 {
                     //일반 베기
                     isSkill = true;
+                    StartCoroutine(DetectNSOverTime(0.3f));
+                    /*Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(NSPos.position, NSBoxSize, 0);
+                    foreach (Collider2D collider in collider2Ds)
+                    {
+                        Debug.Log(collider.tag);
+                        if (collider.gameObject.tag.Contains("enemy")) {
+                            EnemyBasicMove enemy = collider.GetComponent<EnemyBasicMove>();
+                            enemy.OnDamaged(transform.position);
+                        }
+                    }*/
+                    anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    NSCoolTime = NSCoolTime_max;
                 }
                 //아무것도 안 누르고 z만 누른 상태라면
                 else if (!HandCannon.activeSelf && gameManager.bullet > 0)
                 {
                     //가까운 적에게 발사
+                        
                 }
             }
             else
             {
-                if (Input.GetAxisRaw("Horizontal") != 0 && !HandCannon.activeSelf && gameManager.bullet > 0)
+                if (Input.GetKey(KeyCode.UpArrow) && NSCoolTime <= 0)
+                {
+                    Debug.Log("이제야댐");
+                    //위로 베기
+                    isSkill = true;
+                    StartCoroutine(DetectHSOverTime(Vector2.up, 0.3f));
+                    anim.SetBool("NormalSlash", true);
+                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    NSCoolTime = NSCoolTime_max;
+                }
+                else if (Input.GetAxisRaw("Horizontal") != 0 && NSCoolTime <= 0)
+                {
+                    //일반 베기
+                    isSkill = true;
+                    StartCoroutine(DetectNSOverTime(0.3f));
+                    anim.SetBool("NormalSlash", true);
+                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    NSCoolTime = NSCoolTime_max;
+                }
+                else if (!HandCannon.activeSelf && gameManager.bullet > 0)
                 {
                     HandCannon.SetActive(true);
                     gameManager.BulletDown();
                     handCannonMove.Shot(spriteRenderer.flipX);
-                }
-                else if (Input.GetKeyDown(KeyCode.UpArrow))
-                {
-                    //위로 베기
-                }
-                else
-                {
-                    //임시
-                    isSkill = true;
-                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
-                    //전방으로 살짝 돌진하며 찌르기
                 }
             }
         }
@@ -171,8 +211,8 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        //Skill_3
-        if (Input.GetKeyDown(KeyCode.C) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && S3CoolTime <= 0 && gameManager.bullet > 5)
+        //C_Press (Skill_3)
+        if (Input.GetKeyDown(KeyCode.C) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && S3Count >= S3Count_max && gameManager.bullet > 5)
         {
             isSkill = true;
             StartCoroutine(Skill_3());
@@ -192,6 +232,11 @@ public class PlayerMove : MonoBehaviour
     void FixedUpdate()
     {
         //쿨타임
+        if (NSCoolTime > 0)
+        {
+            NSCoolTime -= Time.deltaTime;
+        }
+
         if (S1CoolTime > 0)
         {
             S1CoolTime -= Time.deltaTime;
@@ -200,11 +245,6 @@ public class PlayerMove : MonoBehaviour
         if (S2CoolTime > 0)
         {
             S2CoolTime -= Time.deltaTime;
-        }
-
-        if (S3CoolTime > 0)
-        {
-            S3CoolTime -= Time.deltaTime;
         }
 
         //움직임 속도
@@ -289,6 +329,69 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private IEnumerator DetectNSOverTime(float duration)
+    {
+        float timer = 0f;
+        HashSet<EnemyBasicMove> hitEnemies = new HashSet<EnemyBasicMove>(); // 중복 방지를 위한 집합
+
+        while (timer < duration)
+        {
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(NSPos.position, NSBoxSize, 0);
+            foreach (Collider2D collider in collider2Ds)
+            {
+                if (collider.gameObject.tag.Contains("enemy"))
+                {
+                    EnemyBasicMove enemy = collider.GetComponent<EnemyBasicMove>();
+
+                    // 적이 이미 공격받은 적이 없다면 즉시 처리
+                    if (enemy != null && !hitEnemies.Contains(enemy))
+                    {
+                        hitEnemies.Add(enemy); // 적을 기록
+                        enemy.OnDamaged(transform.position);
+                    }
+                }
+            }
+            yield return null; // 매 프레임마다 감지
+            timer += Time.deltaTime;
+        }
+    }
+
+    private IEnumerator DetectHSOverTime(Vector2 AtkDir, float duration)
+    {
+        float timer = 0f;
+        HashSet<EnemyBasicMove> hitEnemies = new HashSet<EnemyBasicMove>(); // 중복 방지를 위한 집합
+
+        while (timer < duration)
+        {
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, HSRadius); // 반지름 내 모든 적 감지
+
+            foreach (Collider2D collider in hitColliders)
+            {
+                if (collider.gameObject.tag.Contains("enemy"))
+                {
+                    // 적과 플레이어 사이의 방향 계산
+                    Vector2 directionToEnemy = (collider.transform.position - transform.position).normalized;
+
+                    // 각도 계산 (벡터의 내적을 이용하여 방향 각도 계산)
+                    float angleToEnemy = Vector2.Angle(AtkDir, directionToEnemy);
+
+                    // 지정된 부채꼴 범위 내에 있는지 확인
+                    if (angleToEnemy < HSAngle / 2)
+                    {
+                        // 적이 부채꼴 범위 내에 있으면 피격 처리
+                        EnemyBasicMove enemy = collider.GetComponent<EnemyBasicMove>();
+                        if (enemy != null && !hitEnemies.Contains(enemy))
+                        {
+                            hitEnemies.Add(enemy); // 적을 기록
+                            enemy.OnDamaged(transform.position); // 피격 처리
+                        }
+                    }
+                }
+            }
+            yield return null; // 매 프레임마다 감지
+            timer += Time.deltaTime;
+        }
+    }
     private IEnumerator Skill_1()
     {
         yield return null;
@@ -364,15 +467,21 @@ public class PlayerMove : MonoBehaviour
         HandCannon.SetActive(true);  // HandCannon 활성화
         handCannonMove.S2Shoot(S2End, spriteRenderer.flipX);
     }
+    void S2EnemyStrike(Transform enemy)
+    {
+        int direction = spriteRenderer.flipX ? -1 : 1;
+        EnemyBasicMove enemyMove = enemy.GetComponent<EnemyBasicMove>();
+        enemyMove.S2Hit(S2End, direction, handCannonMove.S2ShootDelay);
+    }
 
     private IEnumerator Skill_3()
     {
         Debug.Log("Skill_3 started");
-        S3time = Time.time;
+        S3Time = Time.time;
         audioSource.PlayOneShot(audioS3Start);
         Time.timeScale = 0.2f;
 
-        while (Time.time - S3time < 0.2f)
+        while (Time.time - S3Time < 0.2f)
         {
             yield return null;
         }
@@ -384,11 +493,11 @@ public class PlayerMove : MonoBehaviour
 
         S3Airbone.SetActive(true);
         Time.timeScale = 1;
-        S3time = Time.time;
-        while (Time.time - S3time < 0.4f)
+        S3Time = Time.time;
+        while (Time.time - S3Time < 0.4f)
         {
             yield return null;
-            if (Time.time - S3time > 0.1f) S3Airbone.SetActive(false);
+            if (Time.time - S3Time > 0.1f) S3Airbone.SetActive(false);
         }
 
         Debug.Log("Airborne phase complete");
@@ -399,38 +508,79 @@ public class PlayerMove : MonoBehaviour
         audioSource.PlayOneShot(audioS3Shooting);
 
         //시간 초기화
-        S3time = Time.time;
+        S3Time = Time.time;
         S3AttackArea.SetActive(true);
 
         //S3 보이스
         //audioSource.PlayOneShot(audioS3Voice[Random.Range(0, 4)]);
 
-        while (Time.time - S3time < 1.7f)
+        while (Time.time - S3Time < 1.7f)
         {
             //0.1333초마다 잠시 대상을 바라보는 코드를 넣거나, 중간에 여러 방향을 바라보게 하는 코드를 넣는것도 좋을 거 같음.
-            transform.rotation = Quaternion.Euler(0, (Time.time - S3time) * 360 * 12, 0);
+            transform.rotation = Quaternion.Euler(0, (Time.time - S3Time) * 360 * 12, 0);
             yield return null;
         }
 
         S3AttackArea.SetActive(false);
         transform.rotation = Quaternion.Euler(0, 0, 0);
-        S3time = Time.time;
+        S3Time = Time.time;
         audioSource.PlayOneShot(audioS3End);
+
+        //타이밍 고려 필요
+        gameManager.S3CountDown();
+
         Invoke("S3False", 0.4f);
         Debug.Log("Skill_3 complete");
     }
     void S3False()
     {
         isSkill = false;
+        S3Count = 0;
     }
 
-    void S2EnemyStrike(Transform enemy)
+    private void OnDrawGizmos()
     {
-        int direction = spriteRenderer.flipX ? -1 : 1;
-        EnemyBasicMove enemyMove = enemy.GetComponent<EnemyBasicMove>();
-        enemyMove.S2Hit(S2End, direction, handCannonMove.S2ShootDelay);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(NSPos.position, NSBoxSize);
     }
 
+    void OnDrawGizmosSelected()
+    {
+        // 플레이어의 현재 위치 가져오기
+        Vector3 position = transform.position;
+
+        // 부채꼴의 시작 각도 계산
+        Vector3 startDirection = Quaternion.Euler(0, 0, -HSAngle / 2) * Vector3.up;
+
+        // Gizmos 색상 설정
+        Gizmos.color = Color.red;
+
+        // 부채꼴의 중심에서 반지름을 기준으로 시작점 그리기
+        Gizmos.DrawLine(position, position + startDirection * HSRadius);
+
+        // 부채꼴의 원호를 그리기 위한 점 계산
+        int segments = 20; // 원호의 점 개수
+        float angleStep = HSAngle / segments; // 각도 분할
+
+        Vector3 previousPoint = position + startDirection * HSRadius; // 첫 번째 점
+
+        for (int i = 1; i <= segments; i++)
+        {
+            // 각도 회전 계산
+            float currentAngle = -HSAngle / 2 + angleStep * i;
+            Vector3 nextDirection = Quaternion.Euler(0, 0, currentAngle) * Vector3.up;
+
+            // 새 점 계산
+            Vector3 nextPoint = position + nextDirection * HSRadius;
+
+            // 이전 점과 새 점을 연결하여 선 그리기
+            Gizmos.DrawLine(previousPoint, nextPoint);
+            previousPoint = nextPoint;
+        }
+
+        // 부채꼴의 마지막 점에서 다시 중심으로 선 그리기
+        Gizmos.DrawLine(previousPoint, position);
+    }
 
     void OnDamaged(Vector2 targetPos)
     {
