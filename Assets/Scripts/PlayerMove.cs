@@ -35,12 +35,12 @@ public class PlayerMove : MonoBehaviour
     public float S2CoolTime_max;
     public float S3Count;
     public float S3Count_max;
-    public float AttackType;                //0이라면 총, 1이라면 칼
+    //public float AttackType;                //0이라면 총, 1이라면 칼
     public bool isReload = false;
     //public bool isS1 = false;
     //public bool isS2 = false;
     //public bool isS3 = false;
-    public bool isSkill = false;
+    public bool isSkill = false;            //모든 스킬, 대시 사용중에 true
     public float S2Speed;
     public float S2STCount;
     public float S3Time;
@@ -105,8 +105,9 @@ public class PlayerMove : MonoBehaviour
         //Dash
         if ((Input.GetKeyDown(KeyCode.LeftShift)||Input.GetKeyDown(KeyCode.RightShift)) && isSkill == false && isReload == false)
         {
-            //잔상 이펙트를 가진
-            //대시 구현해야댐!!
+            Debug.Log("대시 발동");
+            Dash();
+            Debug.Log("대시 정상작동");
         }
 
         //Z_Press
@@ -117,7 +118,6 @@ public class PlayerMove : MonoBehaviour
                 if (Input.GetKey(KeyCode.DownArrow) && NSCoolTime <= 0)
                 {
                     //아래로 휘두르면서
-                    isSkill = true;
                     StartCoroutine(DetectHSOverTime(Vector2.down, 0.3f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
@@ -130,7 +130,6 @@ public class PlayerMove : MonoBehaviour
                 else if (Input.GetKey(KeyCode.UpArrow) && NSCoolTime <= 0)
                 {
                     //위로 베기
-                    isSkill = true;
                     StartCoroutine(DetectHSOverTime(Vector2.up, 0.3f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
@@ -139,7 +138,6 @@ public class PlayerMove : MonoBehaviour
                 else if (Input.GetAxisRaw("Horizontal") != 0 && NSCoolTime <= 0)
                 {
                     //일반 베기
-                    isSkill = true;
                     StartCoroutine(DetectNSOverTime(0.3f));
                     /*Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(NSPos.position, NSBoxSize, 0);
                     foreach (Collider2D collider in collider2Ds)
@@ -167,7 +165,6 @@ public class PlayerMove : MonoBehaviour
                 {
                     Debug.Log("이제야댐");
                     //위로 베기
-                    isSkill = true;
                     StartCoroutine(DetectHSOverTime(Vector2.up, 0.3f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
@@ -176,7 +173,6 @@ public class PlayerMove : MonoBehaviour
                 else if (Input.GetAxisRaw("Horizontal") != 0 && NSCoolTime <= 0)
                 {
                     //일반 베기
-                    isSkill = true;
                     StartCoroutine(DetectNSOverTime(0.3f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
@@ -298,7 +294,7 @@ public class PlayerMove : MonoBehaviour
             }
             else
             {
-                if (isSkill == false) OnDamaged(collision.transform.position);
+                OnDamaged(collision.transform.position);
             }
         }
         else if (collision.gameObject.tag == "trap") OnDamaged(collision.transform.position);
@@ -329,6 +325,39 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private IEnumerator Dash()
+    {
+        isSkill = true;
+        //일단 검을 휘두르며 돌진할 경우, 공격 판정이 너무 넓어지기에 중지시키기
+        StopCoroutine("DetectNSOverTime");
+        StopCoroutine("DetectHSOverTime");
+        //그리고 플레이어의 레이어를 적과 충돌하지 않는 레이어로 바꿔야 댐
+        gameObject.layer = 9;
+        rigid.gravityScale = 0;
+        //이제 대시 구현
+        float distanceToMove = 2f;  // 이동할 총 거리
+        float moveDuration = 0.2f;     // 이동하는데 걸릴 시간 (일단 0.2초)
+        float elapsedTime = 0f;
+        S2Start = transform.position;
+        S2End = S2Start + new Vector3(spriteRenderer.flipX ? -distanceToMove : distanceToMove, 0, 0);  // 방향에 따른 이동 목표
+
+        // 시간 경과에 따라 거리를 일정 비율로 이동
+        while (elapsedTime < moveDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / moveDuration;  // 현재 시간에 따른 비율 (0~1)
+            transform.position = Vector3.Lerp(S2Start, S2End, t);  // 시작 지점에서 목표 지점까지 점진적으로 이동
+            yield return null;
+        }
+        Debug.Log("이동거리 : " + Mathf.Abs(S2Start.x - transform.position.x));
+        rigid.velocity = Vector2.zero;
+        //대시 종료 후 레이어 정상화
+        isSkill = false;
+        gameObject.layer = 8;
+        rigid.gravityScale = 2;
+        //대시 종료 후 어색하지 않게 움직이게 하기
+    }
+
     private IEnumerator DetectNSOverTime(float duration)
     {
         float timer = 0f;
@@ -336,7 +365,8 @@ public class PlayerMove : MonoBehaviour
 
         while (timer < duration)
         {
-            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(NSPos.position, NSBoxSize, 0);
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(new Vector3(gameObject.transform.position.x+((NSPos.position.x-gameObject.transform.position.x)*(spriteRenderer.flipX?-1:1)), NSPos.position.y, NSPos.position.z), NSBoxSize, 0);
+            //위의 한 줄은 C#을 잘 몰라서 노가다식으로 했기 때문에 간결화 필요
             foreach (Collider2D collider in collider2Ds)
             {
                 if (collider.gameObject.tag.Contains("enemy"))
@@ -414,7 +444,7 @@ public class PlayerMove : MonoBehaviour
          // 위아래에서 전방으로 레이를 발사함.
           //맞는 게 없다면 그대로.
          //맞았는데 위와 아래의 값이 거의 동일하다면(벽이라면) 그 직전까지만 이동함
-          //맞았는데 위와 아래의 값이 1만큼 차이난다면(오르막길이라면) 어떻게 해야? 멈추는 건 또 맛이 없으니까 이건 안맞더라도 그대로?
+          //맞았는데 위와 아래의 값이 1만큼 차이난다면(오르막길이라면) 어떻게 해야? 이건 오르막길을 고려해서 플레이어보다 1칸 위에서 다시 레이를 쏘고, 또 맞으면 또 1칸 위에서 레이를 쏘고 해서 정확한 지형 파악 후 이동하도록 하는 게 좋을 듯?
           //이건 모두 구현한 다음에 만드는거로
          //float targetPosition = S2Start.x + 5 * direction;
 
@@ -460,7 +490,8 @@ public class PlayerMove : MonoBehaviour
         }
         Debug.Log("이동거리 : "+ Mathf.Abs(S2Start.x - transform.position.x));
 
-        // 이동이 끝난 후 캡슐 충돌체 원래 크기로 복구
+        // 이동이 끝난 후 캡슐 콜라이더 원래 크기로 복구
+        capsuleCollider.direction = CapsuleDirection2D.Vertical;
         capsuleCollider.size = new Vector2(0.77f, 1);
         rigid.velocity = Vector2.zero;
 
