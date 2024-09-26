@@ -456,6 +456,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &56777089
@@ -929,6 +930,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &97748418
@@ -945,6 +947,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &100217194
@@ -1180,6 +1183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &144056283
@@ -1196,6 +1200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &161771025
@@ -2292,6 +2297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &307169967
@@ -2308,6 +2314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &320653021
@@ -2511,6 +2518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &320653029
@@ -2527,6 +2535,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &334948645
@@ -2730,6 +2739,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &334948653
@@ -2746,6 +2756,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &341864071
@@ -6301,6 +6312,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &448082551
@@ -6317,6 +6329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &461479768
@@ -6656,6 +6669,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &493513480
@@ -6672,6 +6686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &499489417
@@ -6906,6 +6921,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &500715979
@@ -6922,6 +6938,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &519420028
@@ -7382,6 +7399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &550743468
@@ -7398,6 +7416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &561362440
@@ -8083,6 +8102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &701559146
@@ -8099,6 +8119,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &704191719
@@ -8302,6 +8323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &704191727
@@ -8318,6 +8340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &705818626
@@ -8858,6 +8881,9 @@ MonoBehaviour:
   UIPoint: {fileID: 461479770}
   UIStage: {fileID: 27231285}
   ScriptTxt: {fileID: 1682841750}
+  S1CoolTxt: {fileID: 0}
+  S2CoolTxt: {fileID: 0}
+  S3CoolTxt: {fileID: 0}
   GameCamera: {fileID: 705818626}
   UIRestartBtn: {fileID: 821985570}
 --- !u!4 &756622539
@@ -9357,6 +9383,7 @@ Transform:
   - {fileID: 100217195}
   - {fileID: 1741831377}
   - {fileID: 341864072}
+  - {fileID: 1590408365}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &836414639
@@ -9416,8 +9443,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 35aad7f506af688489ada79abef9467a, type: 3}
   - {fileID: 8300000, guid: 4c9344544f8a5fb419d99c125878792a, type: 3}
   - {fileID: 8300000, guid: ad0189c80e72f4942985767247b36bc5, type: 3}
-  maxSpeed: 7
+  maxSpeed: 8
   jumpPower: 15
+  ghostDelayTime: 0
+  ghostDelay: 0.04
   NSCoolTime: 0
   NSCoolTime_max: 0.5
   S1CoolTime: 0
@@ -9428,9 +9457,11 @@ MonoBehaviour:
   S3Count_max: 16
   isReload: 0
   isSkill: 0
+  isDash: 0
   S2Speed: 75
   S2STCount: 0
   S3Time: 0
+  ghost: {fileID: 1590408364}
   S2Start: {x: 0, y: 0, z: 0}
   S2End: {x: 0, y: 0, z: 0}
   HandCannon: {fileID: 1741831376}
@@ -9987,6 +10018,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &884459308
@@ -10003,6 +10035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &913043383
@@ -10281,6 +10314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &945983477
@@ -10297,6 +10331,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &971854466
@@ -13620,6 +13655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1063566445
@@ -13636,6 +13672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1079820443
@@ -13839,6 +13876,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1079820451
@@ -13855,6 +13893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1111744575
@@ -14316,6 +14355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1123086711
@@ -14332,6 +14372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1132678883
@@ -14761,6 +14802,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1147742545
@@ -18674,6 +18716,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1162040080
@@ -18690,6 +18733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1192535933
@@ -20529,6 +20573,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1566610466
@@ -20545,6 +20590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1571479733
@@ -20585,6 +20631,112 @@ Transform:
   - {fileID: 884459306}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1590408364
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1590408365}
+  - component: {fileID: 1590408367}
+  - component: {fileID: 1590408366}
+  m_Layer: 8
+  m_Name: ghost
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1590408365
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590408364}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 836414638}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1590408366
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590408364}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ead3298c5b6bb44478adffa8f597aa77, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!212 &1590408367
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590408364}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 46d95398c2f9975459fccba0af3b39ef, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &1590796673
 GameObject:
   m_ObjectHideFlags: 0
@@ -20899,6 +21051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1609683000
@@ -20915,6 +21068,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1611125998
@@ -22622,6 +22776,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1748975468
@@ -22638,6 +22793,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1749000301
@@ -24726,6 +24882,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1796130303
@@ -24742,6 +24899,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1804222084
@@ -26058,6 +26216,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &1907180175
@@ -26074,6 +26233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &1933509179
@@ -34262,6 +34422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &2042535322
@@ -34278,6 +34439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &2049018055
@@ -34765,6 +34927,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 0}
   S3AttackArea: {fileID: 0}
 --- !u!114 &2094085916
@@ -34781,6 +34944,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   isHit: 0
+  isBoss: 0
   S3Airbone: {fileID: 1804222084}
   S3AttackArea: {fileID: 879520056}
 --- !u!1 &2116782565

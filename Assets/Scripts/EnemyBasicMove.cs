@@ -7,6 +7,7 @@ public class EnemyBasicMove : MonoBehaviour
     Rigidbody2D rigid;
     public int health;
     public bool isHit;
+    public bool isBoss;
 
     public GameObject S3Airbone;
     public GameObject S3AttackArea;
@@ -56,6 +57,7 @@ public class EnemyBasicMove : MonoBehaviour
         //튕겨나가기
         int dirc = transform.position.x - player.x > 0 ? 1 : -1;
         rigid.AddForce(new Vector2(dirc, 1) * 2, ForceMode2D.Impulse);
+            //플레이어가 검으로 타격하며 전진할 경우, 적이 충분히 밀려나지 않아 피격당할 수 있음. 이를 해결하는 게 좋을까?
         //플레이어 S3게이지 채우기, 게임매니저로 넘기면 좋을 듯
         gameManager.S3CountUp();
         //체력 계산
@@ -81,7 +83,7 @@ public class EnemyBasicMove : MonoBehaviour
     {
         // 이미 감지된 적들을 제거하여 중복되지 않도록 처리
         detectedEnemies.Clear();
-        // 주변 4의 범위 내에 있는 모든 적을 인식
+        // 주변 원형 범위 내에 있는 모든 적을 인식
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 2.5f);
 
         foreach (Collider2D collider in hitColliders)
@@ -180,8 +182,10 @@ public class EnemyBasicMove : MonoBehaviour
         rigid.bodyType = RigidbodyType2D.Kinematic;
 
         yield return new WaitForSeconds(2.1f);
+        
+        //3스 이후 동작
         rigid.bodyType = RigidbodyType2D.Dynamic;
-        rigid.AddForce(new Vector2((transform.position.x - player.position.x) >= 0 ? 1 : -1, 1) * 5, ForceMode2D.Impulse);
+        rigid.AddForce(new Vector2((transform.position.x - player.position.x) >= 0 ? 1 : -1, 1) * 3, ForceMode2D.Impulse);
         if (health <= 0)
         {
             Dead();

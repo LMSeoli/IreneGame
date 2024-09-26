@@ -10,6 +10,7 @@ using Color = UnityEngine.Color;
 
 public class PlayerMove : MonoBehaviour
 {
+//기본적인 요소
     public GameManager gameManager;
     public AudioClip audioJump;
     public AudioClip audioAttack;
@@ -25,8 +26,11 @@ public class PlayerMove : MonoBehaviour
     public AudioClip audioS3End;
     public AudioClip[] audioS3Voice;
 
+//계산에 직접 사용되는 요소
     public float maxSpeed;  //얘네는 유니티쪽에서 설정 가능!
     public float jumpPower;
+    public float ghostDelayTime;
+    public float ghostDelay;
     public float NSCoolTime;
     public float NSCoolTime_max;
     public float S1CoolTime;
@@ -41,10 +45,13 @@ public class PlayerMove : MonoBehaviour
     //public bool isS2 = false;
     //public bool isS3 = false;
     public bool isSkill = false;            //모든 스킬, 대시 사용중에 true
+    public bool isDash = false;             //대시 사용 중에 true
     public float S2Speed;
     public float S2STCount;
     public float S3Time;
 
+//외적인 요소
+    public GameObject ghost;
     public Vector3 S2Start;
     public Vector3 S2End;
     public GameObject HandCannon;
@@ -106,19 +113,22 @@ public class PlayerMove : MonoBehaviour
         if ((Input.GetKeyDown(KeyCode.LeftShift)||Input.GetKeyDown(KeyCode.RightShift)) && isSkill == false && isReload == false)
         {
             Debug.Log("대시 발동");
-            Dash();
+            isDash = true;
+            StartCoroutine(Dash());
             Debug.Log("대시 정상작동");
         }
 
         //Z_Press
         if (Input.GetKeyDown(KeyCode.Z) && isSkill == false && isReload == false)
         {
+            //공중에 있을 때
             if (anim.GetBool("isJumping") == true)
             {
+                
                 if (Input.GetKey(KeyCode.DownArrow) && NSCoolTime <= 0)
                 {
                     //아래로 휘두르면서
-                    StartCoroutine(DetectHSOverTime(Vector2.down, 0.3f));
+                    StartCoroutine(DetectHSOverTime(Vector2.down, 0.2f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
                     NSCoolTime = NSCoolTime_max;
@@ -130,7 +140,7 @@ public class PlayerMove : MonoBehaviour
                 else if (Input.GetKey(KeyCode.UpArrow) && NSCoolTime <= 0)
                 {
                     //위로 베기
-                    StartCoroutine(DetectHSOverTime(Vector2.up, 0.3f));
+                    StartCoroutine(DetectHSOverTime(Vector2.up, 0.2f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
                     NSCoolTime = NSCoolTime_max;
@@ -138,16 +148,7 @@ public class PlayerMove : MonoBehaviour
                 else if (Input.GetAxisRaw("Horizontal") != 0 && NSCoolTime <= 0)
                 {
                     //일반 베기
-                    StartCoroutine(DetectNSOverTime(0.3f));
-                    /*Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(NSPos.position, NSBoxSize, 0);
-                    foreach (Collider2D collider in collider2Ds)
-                    {
-                        Debug.Log(collider.tag);
-                        if (collider.gameObject.tag.Contains("enemy")) {
-                            EnemyBasicMove enemy = collider.GetComponent<EnemyBasicMove>();
-                            enemy.OnDamaged(transform.position);
-                        }
-                    }*/
+                    StartCoroutine(DetectNSOverTime(0.2f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
                     NSCoolTime = NSCoolTime_max;
@@ -159,13 +160,14 @@ public class PlayerMove : MonoBehaviour
                         
                 }
             }
+            //땅 위에 있을 때
             else
             {
                 if (Input.GetKey(KeyCode.UpArrow) && NSCoolTime <= 0)
                 {
                     Debug.Log("이제야댐");
                     //위로 베기
-                    StartCoroutine(DetectHSOverTime(Vector2.up, 0.3f));
+                    StartCoroutine(DetectHSOverTime(Vector2.up, 0.2f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
                     NSCoolTime = NSCoolTime_max;
@@ -173,7 +175,7 @@ public class PlayerMove : MonoBehaviour
                 else if (Input.GetAxisRaw("Horizontal") != 0 && NSCoolTime <= 0)
                 {
                     //일반 베기
-                    StartCoroutine(DetectNSOverTime(0.3f));
+                    StartCoroutine(DetectNSOverTime(0.2f));
                     anim.SetBool("NormalSlash", true);
                     swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
                     NSCoolTime = NSCoolTime_max;
@@ -272,6 +274,9 @@ public class PlayerMove : MonoBehaviour
                 }
             }
         }
+
+        //대시 잔상
+
     }
 
     //피격 이벤트
@@ -331,31 +336,55 @@ public class PlayerMove : MonoBehaviour
         //일단 검을 휘두르며 돌진할 경우, 공격 판정이 너무 넓어지기에 중지시키기
         StopCoroutine("DetectNSOverTime");
         StopCoroutine("DetectHSOverTime");
+
         //그리고 플레이어의 레이어를 적과 충돌하지 않는 레이어로 바꿔야 댐
         gameObject.layer = 9;
         rigid.gravityScale = 0;
-        //이제 대시 구현
-        float distanceToMove = 2f;  // 이동할 총 거리
-        float moveDuration = 0.2f;     // 이동하는데 걸릴 시간 (일단 0.2초)
-        float elapsedTime = 0f;
-        S2Start = transform.position;
-        S2End = S2Start + new Vector3(spriteRenderer.flipX ? -distanceToMove : distanceToMove, 0, 0);  // 방향에 따른 이동 목표
 
+        //이제 대시 구현
+        float distanceToMove = 3f;      // 이동할 총 거리
+        float moveDuration = 0.2f;      // 이동하는데 걸릴 시간 (일단 0.2초)
+        float elapsedTime = 0f;         
+        S2Start = transform.position;
+        float dir = spriteRenderer.flipX ? -1 : 1;
+        S2End = S2Start + new Vector3(dir*distanceToMove, 0, 0);  // 방향에 따른 이동 목표
+
+        Debug.Log("1차성공");
         // 시간 경과에 따라 거리를 일정 비율로 이동
-        while (elapsedTime < moveDuration)
+        while (elapsedTime <= moveDuration)
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / moveDuration;  // 현재 시간에 따른 비율 (0~1)
             transform.position = Vector3.Lerp(S2Start, S2End, t);  // 시작 지점에서 목표 지점까지 점진적으로 이동
+            if (ghostDelayTime > 0)
+            {
+                ghostDelayTime -= Time.deltaTime;
+            }
+            else
+            {
+                GameObject currentGhost = Instantiate(ghost, this.transform.position, this.transform.rotation);
+                Sprite currentSprite = this.GetComponent<SpriteRenderer>().sprite;
+                currentGhost.transform.localScale = this.transform.localScale;
+                currentGhost.GetComponent<SpriteRenderer>().sprite = currentSprite;
+                currentGhost.GetComponent<SpriteRenderer>().flipX = spriteRenderer.flipX;
+                this.ghostDelayTime = this.ghostDelay;
+                Destroy(currentGhost, 0.5f);
+            }
             yield return null;
         }
         Debug.Log("이동거리 : " + Mathf.Abs(S2Start.x - transform.position.x));
-        rigid.velocity = Vector2.zero;
-        //대시 종료 후 레이어 정상화
+
+        //대시 종료 후 여러 설정 정상화
         isSkill = false;
+        isDash = false;
         gameObject.layer = 8;
         rigid.gravityScale = 2;
         //대시 종료 후 어색하지 않게 움직이게 하기
+        rigid.velocity = new Vector2(maxSpeed * dir, 0);
+        /*if (dir == Input.GetAxisRaw("Horizontal"))
+        {
+            rigid.velocity = new Vector2(maxSpeed*dir, 0);
+        }*/
     }
 
     private IEnumerator DetectNSOverTime(float duration)

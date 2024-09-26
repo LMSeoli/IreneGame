@@ -26,6 +26,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI UIPoint;
     public TextMeshProUGUI UIStage;
     public TextMeshProUGUI ScriptTxt;
+    public TextMeshProUGUI S1CoolTxt;           //
+    public TextMeshProUGUI S2CoolTxt;           //
+    public TextMeshProUGUI S3CoolTxt;           //테스트 시엔 일단 텍스트로 표시
     public GameObject GameCamera;
     public GameObject UIRestartBtn;
 
@@ -115,7 +118,7 @@ public class GameManager : MonoBehaviour
             //이쪽 오디오는 원샷보다 오디오 클립으로 하는 게 나을 거 같음
             audioSource.PlayOneShot(audioBulletIn);
             float Reloadtime = Time.time;
-            while (Time.time - Reloadtime < 0.4f)
+            while (Time.time - Reloadtime < 0.6f)       //여기의 숫자가 탄환의 재장전 시간을 나타냄. 사운드에 맞는 초기값은 0.4f
             {
                 if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.C))
                 {
@@ -131,12 +134,6 @@ public class GameManager : MonoBehaviour
         audioSource.PlayOneShot(audioSlideIn);
         player.isReload = false;
     }
-
-    /*void ReloadEnd()
-    {
-        playerMove.isReload = false;
-        audioSource.PlayOneShot(audioBulletIn);
-    }*/
 
     public void PlayerReposition()
     {
