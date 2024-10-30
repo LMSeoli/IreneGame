@@ -47,12 +47,49 @@ public class SwordMove : MonoBehaviour
         playerAnim.SetBool("NormalSlash", false);
         TrailEffect.enabled = false;
         spriteRenderer.enabled = false;
-        playerMove.isSkill = false;
+        //isSkill은 playermove쪽에서 해야할 거 같음
     }
 
-    public IEnumerator NormalSting()
+    public IEnumerator S1SwordMove(bool dir)
     {
-        yield return null;
+        spriteRenderer.enabled = true;
+        spriteRenderer.flipY = !dir;
+        Center.transform.rotation = Quaternion.Euler(0, 0, !dir ? 50 : 130);
+        if (dir) Center.transform.position = new Vector3(Player.transform.position.x + 0.08f, Player.transform.position.y + 0.04f, 0);
+        else Center.transform.position = new Vector3(Player.transform.position.x - 0.08f, Player.transform.position.y - 0.04f, 0);
+        TrailEffect.enabled = true;
+        //위에서 잠시 기다리고
+        yield return new WaitForSeconds(0.05f);     //위에 있는 시간
+        //바로 밑으로 이동
+        float Downtime = Time.time;
+        while (Time.time - Downtime < 0.04f)        //시전시간 있다면 이거 사용
+        {
+            Center.transform.Rotate(0, 0, !dir ? 50 - (Time.time - Downtime) * 2500 : 130 + (Time.time - Downtime) * 2500); //100도/0.04 = 2500
+            yield return new WaitForSeconds(0.001f);
+        }
+        Center.transform.rotation = Quaternion.Euler(0, 0, !dir ? -50 : 230);
+        yield return new WaitForSeconds(0.05f);     //아래에 있는 시간
+        Downtime = Time.time;
+        while (Time.time - Downtime < 0.04f)        //시전시간 있다면 이거 사용
+        {
+            Center.transform.Rotate(0, 0, !dir ? -50 + (Time.time - Downtime) * 2500 : 230 - (Time.time - Downtime) * 2500);
+            yield return new WaitForSeconds(0.001f);
+        }
+        Center.transform.rotation = Quaternion.Euler(0, 0, !dir ? 50 : 130);
+        yield return new WaitForSeconds(0.05f);     //아래에 있는 시간
+        Downtime = Time.time;
+        while (Time.time - Downtime < 0.04f)        //시전시간 있다면 이거 사용
+        {
+            Center.transform.Rotate(0, 0, !dir ? 50 - (Time.time - Downtime) * 2500 : 130 + (Time.time - Downtime) * 2500);
+            yield return new WaitForSeconds(0.001f);
+        }
+        Center.transform.rotation = Quaternion.Euler(0, 0, !dir ? -50 : 230);
+        yield return new WaitForSeconds(0.05f);     //아래에 있는 시간
+        //힘을 모으며 뒤로 가기, 미구현. 스프라이트에 맞춰야 됨. 지속적으로 뒤로 가기 보다는 스프라이트도 그렇고 3단계로 나눠서 뒤로 가게 하는 게 나을 것 같음
+        //Center.transform.rotation = Quaternion.Euler(0, 0, !dir ? 0 : -180);
+        //잠시 멈추는 시간, 이것 또한 스프라이트에 맞추기
+        spriteRenderer.enabled = false;
+        TrailEffect.enabled = false;
     }
 
     public IEnumerator DownZ()

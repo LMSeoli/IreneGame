@@ -135,6 +135,23 @@ public class GameManager : MonoBehaviour
         player.isReload = false;
     }
 
+    public IEnumerator ReloadAtOnce()           //bullet을 전부 사용하고 한 번에 리로딩되게 하는 함수, skill로 취급하면 충돌할 일도 없음
+    {
+        Debug.Log("Reload!");
+        while (bullet < 6)
+        {
+            //이쪽 오디오는 원샷보다 오디오 클립으로 하는 게 나을 거 같음
+            audioSource.PlayOneShot(audioBulletIn);
+            float Reloadtime = Time.time;
+            yield return new WaitForSeconds(0.1f);        //여기의 숫자가 탄환의 재장전 시간을 나타냄. 사운드에 맞는 초기값은 0.4f
+            UIBullet[bullet].color = new Color(1, 1, 1, 1);
+            bullet++;
+        }
+        audioSource.PlayOneShot(audioSlideIn);
+        //player.isReload = false;
+        player.isSkill = false;
+    }
+
     public void PlayerReposition()
     {
         player.transform.position = new Vector3(0, 0, -1);

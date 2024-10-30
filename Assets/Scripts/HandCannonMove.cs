@@ -18,12 +18,14 @@ public class HandCannonMove : MonoBehaviour
     PlayerMove playerMove;
     BulletMove bulletMove;
     AudioSource audioSource;
+    GameManager gameManager;
 
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         playerMove = Player.GetComponent<PlayerMove>();
         audioSource = Player.GetComponent<AudioSource>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     public void Shot(bool dir)
@@ -38,13 +40,44 @@ public class HandCannonMove : MonoBehaviour
         bullet.SetActive(true);
         BulletMove bulletMove = bullet.GetComponent<BulletMove>();
         bulletMove.NormalShot();
-        // 미사일로부터 리지드바디 2D 컴포넌트 가져옴
+        //총알로부터 리지드바디 2D 컴포넌트 가져옴
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
-        // 미사일을 전방으로 발사
+        //총알을 전방으로 발사
         Invoke("disable", ShotDelay);
     }
-    
+
+    public void S1Shoot(bool dir, Vector3 ShootDirection)
+    {
+        /*CancelInvokeLog("disable");               //난사 코드
+        spriteRenderer.flipY = dir;
+        transform.position = new Vector2(Player.transform.position.x + (dir ? -0.4f : 0.4f), Player.transform.position.y);
+        transform.rotation = Quaternion.Euler(0, 0, dir ? 180 : 0);
+        while (BulLeft > 0)
+        {
+            PlaySound("Shot");
+            GameObject bullet = Instantiate(bulletObject, transform.position, transform.rotation);  //각도도 맞춰진다?!!
+            bullet.SetActive(true);
+            BulletMove bulletMove = bullet.GetComponent<BulletMove>();
+            bulletMove.S2Shot();
+            yield return new WaitForSeconds(0.09f);
+            BulLeft -= 1;
+            gameManager.BulletDown();
+        }
+        gameManager.StartCoroutine(gameManager.ReloadAtOnce());
+        Invoke("disable", ShotDelay);*/
+
+        CancelInvokeLog("disable");
+        PlaySound("Shot");
+        float angle = Mathf.Atan2(ShootDirection.y, ShootDirection.x) * Mathf.Rad2Deg; // 방향 벡터의 각도 계산
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+        spriteRenderer.flipY = dir; 
+        GameObject bullet = Instantiate(bulletObject, transform.position, transform.rotation);
+        bullet.SetActive(true);
+        BulletMove bulletMove = bullet.GetComponent<BulletMove>();
+        bulletMove.ExplodeShot();
+        Invoke("disable", ShotDelay);
+    }
 
     public void S2Shoot(Vector3 S2End, bool dir)
     {

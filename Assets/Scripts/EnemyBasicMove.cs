@@ -68,12 +68,12 @@ public class EnemyBasicMove : MonoBehaviour
             Dead();
             return;
         }
-        gameObject.layer = 14;
+        //gameObject.layer = 14;
         //색 변경
         spriteRenderer.color = new UnityEngine.Color(1, 1, 1, 0.4f); //rgb다음은 투명도!
 
         Invoke("Return", 0.3f);
-        Invoke("NotHit", 2f);
+        Invoke("NotHit", 1f);
         //Animation
         //anim.SetTrigger("doDamaged");
         //Invoke("OffDamaged", 0.2f);
@@ -84,7 +84,7 @@ public class EnemyBasicMove : MonoBehaviour
         // 이미 감지된 적들을 제거하여 중복되지 않도록 처리
         detectedEnemies.Clear();
         // 주변 원형 범위 내에 있는 모든 적을 인식
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 2.5f);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 3f);
 
         foreach (Collider2D collider in hitColliders)
         {
@@ -118,7 +118,7 @@ public class EnemyBasicMove : MonoBehaviour
     public void S1Hit(Vector3 S2End, int direction, float ShootDelay)
     {
         //이미 S2에서 띄우고 쏘는 걸 했으니까, 이걸 아이린 1스로 해버리면 너무 특색이 없어짐.
-        //얼스에서 영감을 얻어볼까?
+        //아예 총 난사해서 공중에 띄우는 거로?
 
 
     }
@@ -150,7 +150,7 @@ public class EnemyBasicMove : MonoBehaviour
 
         // 직접 메서드 호출
         Invoke("Return", 2f);
-        Invoke("NotHit", 2f);
+        Invoke("NotHit", 1f);
         //}
     }
 
@@ -192,9 +192,10 @@ public class EnemyBasicMove : MonoBehaviour
             yield return null;
         }
         Invoke("Return", 0.3f);
-        Invoke("NotHit", 2f);
+        Invoke("NotHit", 1f);
         Debug.Log("S3Hit complete");
     }
+
 
     void Return()
     {
