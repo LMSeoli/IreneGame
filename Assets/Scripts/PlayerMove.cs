@@ -1,12 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Net;
-using System.Runtime.InteropServices;
+using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Color = UnityEngine.Color;
 
 
@@ -14,6 +11,8 @@ public class PlayerMove : MonoBehaviour
 {
     //기본적인 요소
     public GameManager gameManager;
+    public CutsceneManager cutsceneManager;
+    public RelicManager relic;
     public AudioClip audioJump;
     public AudioClip audioAttack;
     public AudioClip audioDamaged;
@@ -33,6 +32,10 @@ public class PlayerMove : MonoBehaviour
     public float jumpPower;
     public float ghostDelayTime;
     public float ghostDelay;
+    public bool isCS;
+    public float CSDelay;
+    public int CSCount;                 //0~5의 값으로, 0이면 보통, 1과2은 일반 휘두르기, 3는 찌르기, 4은 띄우기, 5는 총알이 있다면 공중에 띄운 적 쏘기
+    public float[] CSCool = new float[6];
     public float NSCoolTime;
     public float NSCoolTime_max;
     public float S1CoolTime;
@@ -41,11 +44,11 @@ public class PlayerMove : MonoBehaviour
     public float S2CoolTime_max;
     public float S3Count;
     public float S3Count_max;
-    //public float AttackType;                //0이라면 총, 1이라면 칼
     public bool isReload = false;
-    public bool isS1 = false;
     public int rayDistance;
-    //public bool isS2 = false;
+    //public bool isS1a = false;
+    //public bool isS1b = false;
+    public bool isS2 = false;
     //public bool isS3 = false;
     public bool isSkill = false;            //모든 스킬, 대시 사용중에 true
     public bool isDash = false;             //대시 사용 중에 true
@@ -55,6 +58,9 @@ public class PlayerMove : MonoBehaviour
 
     //외적인 요소 (계산에도 사용되는 것도 많아서 구분이 거의 의미없긴 한디)
     public GameObject ghost;
+    public GameObject bullet;
+    public GameObject swordRotater;
+    public HashSet<GameObject> CSShootTarget = new HashSet<GameObject>();
     public Vector3 s1Direction;
     public Vector3 S2Start;
     public Vector3 S2End;
@@ -64,6 +70,10 @@ public class PlayerMove : MonoBehaviour
     public GameObject S3AttackArea;
     public GameObject targetMark;
     SpriteRenderer markRenderer;
+    public Transform CS_StingPos;
+    public Vector2 CS_StingBoxSize;
+    public Transform CS_AirbonePos;
+    public Vector2 CS_AirboneBoxSize;
     public Coroutine NS;
     public Transform NSPos;
     public Vector2 NSBoxSize;
@@ -78,10 +88,13 @@ public class PlayerMove : MonoBehaviour
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D capsuleCollider;
     Animator anim;
+    Animator swordRotationAnim;
     AudioSource audioSource;
     HandCannonMove handCannonMove;
+    SwordRotationHandler swordRotation;
     SwordMove swordMove;
     LineRenderer lineRenderer;
+    CameraMove cameraMove;
 
     // Start is called before the first frame update
     void Awake()
@@ -92,9 +105,12 @@ public class PlayerMove : MonoBehaviour
         anim = GetComponent<Animator>();  // Animator 컴포넌트 초기화
         audioSource = GetComponent<AudioSource>();
         handCannonMove = HandCannon.GetComponent<HandCannonMove>();
+        swordRotation = FindObjectOfType<SwordRotationHandler>();
         swordMove = Sword.GetComponent<SwordMove>();
+        swordRotationAnim = swordRotater.GetComponent<Animator>();
         lineRenderer = GetComponent<LineRenderer>();
         markRenderer = targetMark.GetComponent<SpriteRenderer>();
+        cameraMove = FindObjectOfType<CameraMove>();
     }
 
     //단발적인 입력은 여기에!!
@@ -141,15 +157,13 @@ public class PlayerMove : MonoBehaviour
                 //아래를 누른 상태라면
                 if (Input.GetKey(KeyCode.DownArrow) && NSCoolTime <= 0)
                 {
-                    //아래로 휘두르면서
                     HS = StartCoroutine(DetectHSOverTime(Vector2.down, 0.2f));
                     anim.SetBool("NormalSlash", true);
-                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    swordRotation.HorizontalSlashStart(spriteRenderer.flipX, false);
                     NSCoolTime = NSCoolTime_max;
 
-                    //90도 돌리고 (구현 안해도 될 듯)
 
-                    //내려찍기 (구현 안해도 될 듯)
+                    //실용성이 없는 것 같아, 차라리 내리꽂기로 만드는 게 나을 듯.
                 }
                 //위를 누른 상태라면
                 else if (Input.GetKey(KeyCode.UpArrow) && NSCoolTime <= 0)
@@ -157,7 +171,7 @@ public class PlayerMove : MonoBehaviour
                     //위로 베기
                     HS = StartCoroutine(DetectHSOverTime(Vector2.up, 0.2f));
                     anim.SetBool("NormalSlash", true);
-                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    swordRotation.HorizontalSlashStart(spriteRenderer.flipX, true);
                     NSCoolTime = NSCoolTime_max;
                 }
                 //양옆을 누르거나 아예 누르지 않은 상태라면
@@ -166,73 +180,86 @@ public class PlayerMove : MonoBehaviour
                     //일반 베기
                     NS = StartCoroutine(DetectNSOverTime(0.2f));
                     anim.SetBool("NormalSlash", true);
-                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    swordRotation.NormalSlashStart(spriteRenderer.flipX);
                     NSCoolTime = NSCoolTime_max;
                 }
             }
             //땅 위에 있을 때
             else
             {
+                Debug.Log("칼 휘두름!");
                 if (Input.GetKey(KeyCode.UpArrow) && NSCoolTime <= 0)
                 {
                     Debug.Log("이제야댐");
                     //위로 베기
                     HS = StartCoroutine(DetectHSOverTime(Vector2.up, 0.2f));
                     anim.SetBool("NormalSlash", true);
-                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
+                    swordRotation.HorizontalSlashStart(spriteRenderer.flipX, true);
                     NSCoolTime = NSCoolTime_max;
                 }
-                else if (Input.GetAxisRaw("Horizontal") != 0 && NSCoolTime <= 0)
+                else
                 {
-                    //일반 베기
-                    NS = StartCoroutine(DetectNSOverTime(0.2f));
-                    anim.SetBool("NormalSlash", true);
-                    swordMove.StartCoroutine(swordMove.NormalSlash(spriteRenderer.flipX));
-                    NSCoolTime = NSCoolTime_max;
+                    if (CSCount == 0 || CSCool[CSCount] < Time.time-CSDelay) {
+                        isSkill = true;
+                        StartCoroutine(ComboSlash());
+                    }
                 }
-                else if (!HandCannon.activeSelf && gameManager.bullet > 0)
+                /*else if (!HandCannon.activeSelf && gameManager.bullet > 0)
                 {
                     HandCannon.SetActive(true);
                     gameManager.BulletDown();
                     handCannonMove.Shot(spriteRenderer.flipX);
-                }
+                }*/
             }
         }
 
         //X_Press
-        if (Input.GetKeyDown(KeyCode.X) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && gameManager.bullet > 0)
+        if (Input.GetKeyDown(KeyCode.X) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && gameManager.bullet > 0 && S1CoolTime <= 0)
         {
-            //Skill 2라 하지만 돌진기
-            if (Input.GetAxisRaw("Horizontal")!=0 && S2CoolTime <= 0)
+            if (Input.GetKey(KeyCode.UpArrow))
             {
-                //일단 검을 휘두르며 돌진할 경우, 공격 판정이 너무 넓어지기에 중지시키기
-                StopSlash();
-
-                Debug.Log("판정 중지함");
-                //스킬 실행
-                isSkill = true;
-                gameManager.BulletDown();
-                StartCoroutine(Skill_2());
+                StartCoroutine(Skill_2b());
             }
-            else if (S1CoolTime <= 0)
+            else if (!anim.GetBool("isJumping"))
             {
-                //검만을 이용하는 거로?
                 isSkill = true;
                 lineRenderer.enabled = true;
                 StartCoroutine(Skill_1());
             }
         }
 
-        //C_Press (Skill_3)
-        if (Input.GetKeyDown(KeyCode.C) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && S3Count >= S3Count_max && gameManager.bullet > 5)
+        //C_Press (Skill_2)
+        if (Input.GetKeyDown(KeyCode.C) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && S2CoolTime <= 0 && gameManager.bullet > 0)
+        {
+            StopSlash();
+            Debug.Log("판정 중지함");
+            if (Input.GetAxis("Horizontal") != 0) {
+                //스킬 실행
+                isSkill = true;
+                Debug.Log("S2 실행댐");
+                StartCoroutine(Skill_2());
+            }
+        }
+
+        //V_Press (Skill_3)
+        if (Input.GetKeyDown(KeyCode.V) && !anim.GetBool("isJumping") && isSkill == false && isReload == false && S3Count >= S3Count_max && gameManager.bullet > 5)
         {
             isSkill = true;
             StartCoroutine(Skill_3());
         }
 
+        if(CSCount != 0)
+        {
+            if (Time.time - CSDelay > 0.5f)
+            {
+                swordRotation.SwordOff();
+                swordRotationAnim.SetInteger("CSCount", 0);
+                anim.SetInteger("CSCount", 0);
+                CSCount = 0;
+            }
+        }
         //스프라이트 방향
-        if (Input.GetButton("Horizontal"))
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+        if (Input.GetButton("Horizontal")) spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
 
         //Animation
         if (Mathf.Abs(rigid.velocity.x) < 0.1)
@@ -240,6 +267,7 @@ public class PlayerMove : MonoBehaviour
         else
             anim.SetBool("isWalking", true);
     }
+
 
     void FixedUpdate()
     {
@@ -260,7 +288,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         //움직임 속도
-        if (isSkill == false)
+        if (isSkill == false && CSCool[CSCount] <= CSDelay)
         {
             //Move Speed
             float h = Input.GetAxisRaw("Horizontal");       //단위를 구한다? normalized가 비슷하대
@@ -288,75 +316,6 @@ public class PlayerMove : MonoBehaviour
                 }
             }
         }
-        
-        //스킬 1 주요 코드
-        if(isS1 == true)
-        {
-            //일단 x가 떼어져 있다면 스킬1을 종료한다
-            if (!Input.GetKey(KeyCode.X))
-            {
-                //S1Shoot 발동
-                isS1 = false;
-                handCannonMove.S1Shoot(spriteRenderer.flipX, s1Direction);
-                //정상화
-                lineRenderer.enabled = false;
-                markRenderer.enabled = false;
-                isSkill = false;
-            }
-            //떼어져있지 않다면 계속 방향을 조정한다
-            else
-            {
-                float horizontal = Input.GetAxisRaw("Horizontal"); // -1 (왼쪽), 1 (오른쪽)
-                float vertical = Input.GetAxisRaw("Vertical"); // -1 (아래), 1 (위)
-                                                               // 좌우가 동시에 눌리면 수평 입력을 0으로 처리
-                if (Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.RightArrow))
-                {
-                    horizontal = 0;
-                }
-                // 상하가 동시에 눌리면 수직 입력을 0으로 처리
-                if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.DownArrow))
-                {
-                    vertical = 0;
-                }
-                Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
-                // 아무 입력도 없으면 Vector3.zero 반환
-                if (inputDirection != Vector2.zero)
-                {
-                    s1Direction = inputDirection;
-                }
-                // 레이캐스트 실행
-                int layerMask = 1 << LayerMask.NameToLayer("Player");
-                layerMask = ~layerMask;
-                RaycastHit2D hit = Physics2D.Raycast(transform.position, s1Direction, rayDistance, layerMask);
-                //핸드캐논 방향 조작
-                float angle = Mathf.Atan2(s1Direction.y, s1Direction.x) * Mathf.Rad2Deg; // 방향 벡터의 각도 계산
-                HandCannon.transform.rotation = Quaternion.Euler(0, 0, angle); // Z축 기준으로 회전
-                SpriteRenderer handCannonSprite = HandCannon.GetComponent<SpriteRenderer>();
-                handCannonSprite.flipY = spriteRenderer.flipX;
-
-                // 라인 렌더러 설정
-                lineRenderer.SetPosition(0, transform.position);
-                if (hit.collider != null)
-                {
-                    Debug.Log(hit.point);
-                    lineRenderer.SetPosition(1, hit.point);
-                    // 충돌한 객체가 "enemy" 태그인지 확인
-                    if (hit.collider.CompareTag("enemy"))
-                    {
-                        Debug.Log("enemy detected");
-                        targetMark.transform.position = hit.collider.transform.position;
-                        markRenderer.enabled = true;
-                    }
-                    else markRenderer.enabled = false;
-                }
-                else
-                {
-                    // 충돌이 없으면 레이의 끝 위치를 최대 거리로 설정
-                    lineRenderer.SetPosition(1, transform.position + (Vector3)s1Direction * rayDistance);
-                    markRenderer.enabled = false;
-                }
-            }
-        }
     }
 
     //피격 이벤트
@@ -364,7 +323,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (collision.gameObject.tag == "enemy")
         {
-            if (isSkill == true)
+            if (isS2 == true)
             {
                 /*if (rigid.velocity.y <= 0 && transform.position.y > collision.transform.position.y)
                 {
@@ -402,6 +361,12 @@ public class PlayerMove : MonoBehaviour
             else if (isGold)
                 gameManager.stagePoint += 200;
             //삭제
+            collision.gameObject.SetActive(false);
+        }
+        else if (collision.gameObject.tag == "Relic")
+        {
+            PlaySound("ITEM");
+            relic.AddRandomRelic();
             collision.gameObject.SetActive(false);
         }
 
@@ -468,6 +433,96 @@ public class PlayerMove : MonoBehaviour
         }*/
     }
 
+    private IEnumerator ComboSlash()                        //기본 평타임!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    {
+        CSCount += 1;
+        anim.SetInteger("CSCount", CSCount);
+        //콤보 베기
+        if (CSCount <= 2)
+        {
+            NS = StartCoroutine(DetectNSOverTime(0.2f));
+            anim.SetBool("NormalSlash", true);
+            swordRotation.ComboSlash(spriteRenderer.flipX, CSCount);
+            CSDelay = Time.time;
+            Vector3 startPosition = transform.position;
+            Vector3 targetPosition = transform.position + (spriteRenderer.flipX?-transform.right:transform.right) * 0.5f;
+            while (Time.time - CSDelay < 0.05f)
+            {
+                transform.position = Vector3.Lerp(startPosition, targetPosition, Time.time - CSDelay / 0.5f);
+                yield return null;
+            }
+            transform.position = targetPosition;
+            yield return new WaitForSeconds(0.2f-(Time.time-CSDelay)); 
+            isSkill = false;
+            //NSCoolTime = NSCoolTime_max;
+        }
+        else if (CSCount == 3)
+        {
+            //적 목록 배열 초기화
+            //찌르는 판정, 찌른 적들 경직
+            anim.SetBool("NormalSlash", true);
+            swordRotation.ComboSlash(spriteRenderer.flipX, CSCount);
+            CSDelay = Time.time;
+            //0.2초동안 잠시 뒤로 물러섰다가
+            Vector2 initialPosition = transform.position;
+            Vector2 targetPosition1 = initialPosition + new Vector2(-0.5f, 0);
+            float elapsed = 0f;
+            while (elapsed < 0.2f)
+            {
+                elapsed += Time.deltaTime;
+                rigid.MovePosition(Vector2.Lerp(initialPosition, targetPosition1, elapsed / 0.2f));
+                yield return new WaitForFixedUpdate();
+            }
+            transform.position = targetPosition1;
+            //공격판정 생성&이동. 따로 함수 만드는 게 훨씬 나았을 듯...
+            while (elapsed < 0.3f)
+            {
+                elapsed += Time.deltaTime;
+                if (elapsed < 0.22f)
+                {
+                    rigid.MovePosition(Vector2.Lerp(targetPosition1, targetPosition1 + new Vector2(1f, 0), (elapsed - 0.2f) / 0.02f));
+                    Debug.Log("1");
+                }
+                else if (elapsed<0.27f) transform.position = targetPosition1+new Vector2(1f, 0);
+
+                Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(new Vector3(gameObject.transform.position.x + ((CS_StingPos.position.x - gameObject.transform.position.x) * (spriteRenderer.flipX ? -1 : 1)), CS_StingPos.position.y, CS_StingPos.position.z), CS_StingBoxSize, 0);
+                //위의 한 줄은 C#을 잘 몰라서 노가다식으로 했기 때문에 간결화 필요
+                foreach (Collider2D collider in collider2Ds)
+                {
+                    if (collider.gameObject.tag.Contains("enemy"))
+                    {
+                        EnemyBasicMove enemy = collider.GetComponent<EnemyBasicMove>();
+                        // 적이 이미 공격받은 적이 없다면 즉시 처리
+                        if (enemy != null && !CSShootTarget.Contains(collider.gameObject))
+                        {
+                            CSShootTarget.Add(collider.gameObject); // 적을 기록
+                            enemy.CS3Hit();
+                        }
+                    }
+                }
+                yield return new WaitForFixedUpdate();
+                Debug.Log("루프 작동중");
+            }
+            //0.02초동안 앞으로 대쉬
+            isSkill = false;
+        }
+        else if (CSCount == 4)
+        {
+            //찌른 적들 살짝 띄어올리기, 범위 내에 있으면 전부 띄워짐.
+            swordRotation.ComboSlash(spriteRenderer.flipX, CSCount);
+            CSDelay = Time.time;
+            isSkill = false;
+        }
+        else if (CSCount == 5 && gameManager.bullet > 0)
+        {
+            //띄운 적에게 총 쏘기
+
+            CSCount = 0;
+            isSkill = false;
+        }
+        yield return null;
+    }
+
     private IEnumerator DetectNSOverTime(float duration)
     {
         float timer = 0f;
@@ -486,11 +541,10 @@ public class PlayerMove : MonoBehaviour
                     if (enemy != null && !hitEnemies.Contains(enemy))
                     {
                         hitEnemies.Add(enemy); // 적을 기록
-                        enemy.OnDamaged(transform.position);
+                        enemy.OnDamaged(transform.position);    //적이 너무 위로 밀려나서 3타가 거의 안 맞음. 이걸 그대로 사용하려면 아예 공격 딜레이를 늘리거나 hpDown을 이용하거나 해야 됨.
                     }
                 }
             }
-            Debug.Log("계속 발동중");
             yield return null; // 매 프레임마다 감지
             timer += Time.deltaTime;
         }
@@ -547,55 +601,92 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    private IEnumerator testSkill()
-    {
-
-        yield return null;
-    }
-
     private IEnumerator Skill_1()
     {
-        /*                      1. 일단 난사 스킬
-        rigid.velocity = Vector3.zero;
-        swordMove.StartCoroutine(swordMove.S1SwordMove(spriteRenderer.flipX));
-        yield return new WaitForSeconds(0.05f);
-        S1DetectEnemy();
-        yield return new WaitForSeconds(0.09f);
-        S1DetectEnemy();
-        yield return new WaitForSeconds(0.09f);
-        S1DetectEnemy();
-        yield return new WaitForSeconds(0.25f);
-        //일단 총 난사
+        /*총 난사 코드
         HandCannon.SetActive(true);
         handCannonMove.StartCoroutine(handCannonMove.S1Shoot(spriteRenderer.flipX, gameManager.bullet));
         yield return new WaitForSeconds(gameManager.bullet * 0.06f);*/
 
         //기초설정만
-        HandCannon.SetActive(true);
-        isS1 = true;                        //2. 8방향 조준 사격
+        HandCannon.SetActive(true);         //2. 8방향 조준 사격
         lineRenderer.positionCount = 2;
-        rigid.velocity = Vector2.zero; 
-        yield return null;
-    }
-
-   /* private void S1DetectEnemy() {                  //난사 코드
-        HashSet<EnemyBasicMove> hitEnemies = new HashSet<EnemyBasicMove>(); // 중복 방지를 위한 집합
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(new Vector3(gameObject.transform.position.x + ((S1Pos.position.x - gameObject.transform.position.x) * (spriteRenderer.flipX ? -1 : 1)), S1Pos.position.y, S1Pos.position.z), S1BoxSize, 0);
-        foreach (Collider2D collider in collider2Ds)
+        rigid.velocity = Vector2.zero;
+        while (isSkill == true)
         {
-            if (collider.gameObject.tag.Contains("enemy"))
+            //일단 x가 떼어져 있다면 스킬1을 종료한다
+            if (!Input.GetKey(KeyCode.X))
             {
-                EnemyBasicMove enemy = collider.GetComponent<EnemyBasicMove>();
-
-                // 적이 이미 공격받은 적이 없다면 즉시 처리
-                if (enemy != null && !hitEnemies.Contains(enemy))
+                //S1Shoot 발동
+                handCannonMove.S1Shoot(spriteRenderer.flipX, s1Direction);
+                gameManager.BulletDown();
+                //정상화
+                lineRenderer.enabled = false;
+                markRenderer.enabled = false;
+                isSkill = false;
+                cameraMove.StartJungSangHwa();
+            }
+            //떼어져있지 않다면 계속 방향을 조정한다
+            else
+            {
+                float horizontal = Input.GetAxisRaw("Horizontal"); // -1 (왼쪽), 1 (오른쪽)
+                float vertical = Input.GetAxisRaw("Vertical"); // -1 (아래), 1 (위)
+                                                               // 좌우가 동시에 눌리면 수평 입력을 0으로 처리
+                if (Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.RightArrow))
                 {
-                    hitEnemies.Add(enemy); // 적을 기록
-                    enemy.OnDamaged(transform.position);
+                    horizontal = 0;
+                }
+                // 상하가 동시에 눌리면 수직 입력을 0으로 처리
+                if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.DownArrow))
+                {
+                    vertical = 0;
+                }
+                Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
+                // 아무 입력도 없으면 Vector3.zero 반환
+                if (inputDirection != Vector2.zero)
+                {
+                    s1Direction = inputDirection;
+                }
+                // 레이캐스트 실행
+                int layerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Default"));
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, s1Direction, rayDistance, layerMask);
+                //핸드캐논 방향 조작
+                float angle = Mathf.Atan2(s1Direction.y, s1Direction.x) * Mathf.Rad2Deg; // 방향 벡터의 각도 계산
+                HandCannon.transform.rotation = Quaternion.Euler(0, 0, angle); // Z축 기준으로 회전
+                SpriteRenderer handCannonSprite = HandCannon.GetComponent<SpriteRenderer>();
+                handCannonSprite.flipY = (angle > 90 || angle <= -90) ? true : false;
+
+                // 라인 렌더러(사거리&직선거리 표시) 설정
+                lineRenderer.SetPosition(0, transform.position);
+                if (hit.collider != null)
+                {
+                    //Debug.Log(hit.point);
+                    //Debug.Log(hit.collider.gameObject.name);
+                    lineRenderer.SetPosition(1, hit.point);
+                    // 충돌한 객체가 "enemy" 태그인지 확인
+                    if (hit.collider.CompareTag("enemy"))
+                    {
+                        targetMark.transform.position = hit.collider.transform.position;
+                        markRenderer.enabled = true;
+                        cameraMove.cameraTarget.position = Vector3.Lerp(cameraMove.cameraTarget.position, (hit.collider.transform.position + cameraMove.originalCameraTargetPosition.position)/2, cameraMove.cameraSmoothSpeed * Time.deltaTime);
+                    }
+                    else
+                    {
+                        cameraMove.cameraTarget.position = Vector3.Lerp(cameraMove.cameraTarget.position, cameraMove.originalCameraTargetPosition.position, cameraMove.cameraSmoothSpeed * Time.deltaTime);
+                        markRenderer.enabled = false;
+                    }
+                }
+                else
+                {
+                    // 충돌이 없으면 레이의 끝 위치를 최대 거리로 설정
+                    lineRenderer.SetPosition(1, transform.position + (Vector3)s1Direction * rayDistance);
+                    markRenderer.enabled = false;
+                    cameraMove.cameraTarget.position = Vector3.Lerp(cameraMove.cameraTarget.position, cameraMove.originalCameraTargetPosition.position, cameraMove.cameraSmoothSpeed * Time.deltaTime);
                 }
             }
+            yield return null;
         }
-    }*/
+    }
 
     /* private IEnumerator Skill_2()
      {
@@ -639,6 +730,7 @@ public class PlayerMove : MonoBehaviour
 
     private IEnumerator Skill_2()
     {
+        isS2 = true;
         float distanceToMove = 5.75f;  // 이동할 총 거리
         float moveDuration = 0.1f;     // 이동하는데 걸릴 시간 (일단 0.1초)
         float elapsedTime = 0f;
@@ -665,7 +757,8 @@ public class PlayerMove : MonoBehaviour
         rigid.velocity = Vector2.zero;
 
         HandCannon.SetActive(true);  // HandCannon 활성화
-        handCannonMove.S2Shoot(S2End, spriteRenderer.flipX);
+        handCannonMove.S2Shoot(S2End, spriteRenderer.flipX); //flipX 말고 시전방향에 따른 기준으로 해야, 반대방향으로 나가는 걸 방지할 수 있음
+        isS2 = false;
     }
     void S2EnemyStrike(Transform enemy)
     {
@@ -674,22 +767,207 @@ public class PlayerMove : MonoBehaviour
         enemyMove.S2Hit(S2End, direction, handCannonMove.S2ShootDelay);
     }
 
+    private IEnumerator Skill_2b()
+    {
+        // 1-1. 적 목록을 담을 리스트 생성
+        List<GameObject> enemyList = new List<GameObject>();
+        // 1-2. 목표를 지정하기 위한 인덱스 생성 (초기값 0)
+        int targetIndex = 0;
+
+        // 2. 타임스케일을 0.3f로 설정
+        Time.timeScale = 0.3f;
+
+        // 5-1. 좌/우 화살표 인식용 변수 생성
+        bool isHorizontalDown = false;
+
+        while (true) // 3. 루프 시작
+        {
+            // 4. 12f 범위 내의 적 감지
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 12f);
+            for (int i = enemyList.Count - 1; i >= 0; i--)
+            {
+                // 4-1. 적이 범위를 벗어난 경우 리스트에서 제거
+                if (!hitColliders.Any(collider => collider.gameObject == enemyList[i]))
+                {
+                    if (i <= targetIndex && targetIndex > 0)
+                    {
+                        targetIndex--; // 인덱스 조정
+                    }
+                    enemyList.RemoveAt(i);
+                }
+            }
+
+            // 4-2. 범위 안에 새로 들어온 적 추가
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.gameObject.tag.Contains("enemy") && !enemyList.Contains(hitCollider.gameObject) && hitCollider.GetComponent<EnemyBasicMove>() != null)
+                {
+                    EnemyBasicMove enemyMove = hitCollider.GetComponent<EnemyBasicMove>();
+                    if (enemyMove.onAir == true)
+                    {
+                        enemyList.Add(hitCollider.gameObject);
+                    }
+                }
+            }
+
+            enemyList = enemyList.OrderBy(enemy => enemy.transform.position.x).ToList();
+            if (targetIndex >= enemyList.Count)
+            {
+                targetIndex = enemyList.Count - 1; // 유효한 인덱스로 조정
+            }
+
+            if (enemyList.Count == 0)
+            {
+                Debug.Log("아무도 감지되지 않습니다");
+                markRenderer.enabled = false;
+                if (!Input.GetKey(KeyCode.X))
+                {
+                    Time.timeScale = 1f; // 원래 타임스케일로 복귀
+                    markRenderer.enabled = false;
+                    rigid.bodyType = RigidbodyType2D.Dynamic; // 리지드바디 상태 복구
+                    isSkill = false; // 스킬 상태 종료
+                    yield break; // 코루틴 종료
+                }
+                yield return null;
+                continue;
+            }
+
+            // 5. 좌/우 화살표를 눌러서 인덱스 조정
+            if (!isHorizontalDown)
+            {
+                if (Input.GetKeyDown(KeyCode.LeftArrow) && targetIndex > 0)
+                {
+                    targetIndex--;
+                    isHorizontalDown = true;
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow) && targetIndex < enemyList.Count - 1)
+                {
+                    targetIndex++;
+                    isHorizontalDown = true;
+                }
+            }
+            if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))
+            {
+                isHorizontalDown = false;
+            }
+
+            if (enemyList.Count > 0)
+            {
+                Transform hit = enemyList[targetIndex].transform;
+                targetMark.transform.position = hit.position;
+                markRenderer.enabled = true;
+                cameraMove.cameraTarget.position = Vector3.Lerp(cameraMove.cameraTarget.position, (hit.position + cameraMove.originalCameraTargetPosition.position) / 2, cameraMove.cameraSmoothSpeed * 5 * Time.deltaTime);
+            }
+
+            // 6. X키를 떼었다면 대상 확정
+            if (!Input.GetKey(KeyCode.X))
+            {
+                Debug.Log(enemyList);
+
+                if (enemyList.Count > targetIndex && enemyList[targetIndex] != null)
+                {
+                    markRenderer.enabled = false;
+                    break;
+                }
+            }
+            yield return null;
+        }
+
+        // 루프 종료 후
+        // 7. 타임스케일을 1f로 복구
+        Time.timeScale = 1f;
+
+        /*// 8. 지정된 적의 Rigidbody2D 위치 예측
+        GameObject targetEnemy = enemyList[targetIndex];
+        Rigidbody2D enemyRb = targetEnemy.GetComponent<Rigidbody2D>();
+        Vector2 predictedPosition = (Vector2)targetEnemy.transform.position + enemyRb.velocity * 0.1f - new Vector2(0, 12f * 0.1f);
+
+        // 9. 적 예상 위치의 1f 위로 이동
+        capsuleCollider.isTrigger = true;
+        transform.position = predictedPosition + Vector2.up;
+        //transform.position = targetEnemy.transform.position + Vector3.up;*/
+        capsuleCollider.isTrigger = true;
+        GameObject targetEnemy = enemyList[targetIndex];
+        if (transform.position.x > targetEnemy.transform.position.x) transform.position = targetEnemy.transform.position + new Vector3(-0.5f, 0.5f, 0);
+        else transform.position = targetEnemy.transform.position + new Vector3(0.5f, 0.5f, 0);
+        rigid.velocity = Vector3.zero;
+        rigid.bodyType = RigidbodyType2D.Kinematic;
+        cameraMove.StartJungSangHwa();
+
+        //지정해뒀던 딜레이인 0.2f만큼 기다림
+        //이젠 0.2f만큼 기다리는 게 아니라, Lerp로 이동하는 모습을 보여주고, 도착하자마자 찍어내리는 게 오히려 나을 듯?
+        yield return new WaitForSeconds(0.2f);
+
+        // 10. 일정 범위 내 적을 수직 아래로 내려치는 코드
+        float duration = 0.1f;
+        float timer = 0f;
+        HashSet<EnemyBasicMove> hitEnemies = new HashSet<EnemyBasicMove>(); // 중복 방지를 위한 집합
+        Vector2 AtkDir = Vector2.down; // 공격 방향 설정
+
+        while (timer < duration)
+        {
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, HSRadius);
+            foreach (Collider2D collider in hitColliders)
+            {
+                if (collider.gameObject.tag.Contains("enemy"))
+                {
+                    Vector2 directionToEnemy = (collider.transform.position - transform.position).normalized;
+                    float angleToEnemy = Vector2.Angle(AtkDir, directionToEnemy);
+
+                    if (angleToEnemy < HSAngle / 2)
+                    {
+                        EnemyBasicMove enemy = collider.GetComponent<EnemyBasicMove>();
+                        if (enemy != null && !hitEnemies.Contains(enemy))
+                        {
+                            hitEnemies.Add(enemy);
+                            enemy.HpDown(); // HP 감소
+                            Rigidbody2D enemyRigidBody = enemy.GetComponent<Rigidbody2D>();
+                            if (enemyRigidBody != null)
+                            {
+                                enemyRigidBody.velocity = Vector2.down * 20f;
+                            }
+                        }
+                    }
+                }
+            }
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        //탄환이 남아있다면 그 대상에게 총 발사
+        if (gameManager.bullet > 0)
+        {
+            HandCannon.SetActive(true);
+            Vector3 directionToTarget = (targetEnemy.transform.position - transform.position).normalized;
+            yield return new WaitForSeconds(0.2f);
+            handCannonMove.NormalShot(spriteRenderer.flipX, directionToTarget);
+            gameManager.BulletDown();
+            rigid.bodyType = RigidbodyType2D.Dynamic;
+            rigid.velocity = -directionToTarget * 5;
+        }
+        else rigid.bodyType = RigidbodyType2D.Dynamic;
+        capsuleCollider.isTrigger = false;
+        isSkill = false;
+    }
+
+
     private IEnumerator Skill_3()
     {
         S3Time = Time.time;
         audioSource.PlayOneShot(audioS3Start);
-        Time.timeScale = 0.2f;
-
-        while (Time.time - S3Time < 0.2f)
+        Time.timeScale = 0f;                      //더 월드다 캣새퀴들아
+        cutsceneManager.StartCoroutine(cutsceneManager.PlayUlt());
+        // 일시정지 상태 동안 1초 대기
+        float elapsedTime = 0f;
+        while (elapsedTime < 1f)
         {
+            elapsedTime += Time.unscaledDeltaTime; // 실제 시간 경과
             yield return null;
         }
         Debug.Log("Cutscene complete");
-
         //에어본
+        Time.timeScale = 1;
         audioSource.PlayOneShot(audioS3Bound);
         S3Airbone.SetActive(true);
-        Time.timeScale = 1;
         S3Time = Time.time;
         while (Time.time - S3Time < 0.4f)
         {
@@ -706,6 +984,7 @@ public class PlayerMove : MonoBehaviour
         //시간 초기화
         S3Time = Time.time;
         S3AttackArea.SetActive(true);
+        S3AttackArea.transform.position = transform.position;
 
         //S3 보이스
         //audioSource.PlayOneShot(audioS3Voice[Random.Range(0, 4)]);
@@ -730,6 +1009,7 @@ public class PlayerMove : MonoBehaviour
     }
     void S3False()
     {
+        gameManager.ReloadAll();
         isSkill = false;
         S3Count = 0;
     }
@@ -738,6 +1018,8 @@ public class PlayerMove : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(NSPos.position, NSBoxSize);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(CS_StingPos.position, CS_StingBoxSize);
     }
 
     void OnDrawGizmosSelected()

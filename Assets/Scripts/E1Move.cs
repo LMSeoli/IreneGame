@@ -43,12 +43,13 @@ public class E1Move : MonoBehaviour
     {
         DetectPlayer();
         if (notfollowPlayer > 0) notfollowPlayer += Time.deltaTime;
+        //spriteRenderer.flipX = rigid.velocity.x>=0;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (enemyBasicMove.isHit == false && noMove == false)
+        if (enemyBasicMove.onAir == false && noMove == false)
         {
             //기본 움직임
             if (notfollowPlayer>0)
@@ -57,7 +58,8 @@ public class E1Move : MonoBehaviour
             }
             else if (followPlayer)
             {
-                rigid.velocity = new Vector2(player.transform.position.x>gameObject.transform.position.x?2:-2, rigid.velocity.y);
+                nextmove = player.transform.position.x > gameObject.transform.position.x?1:-1;
+                rigid.velocity = new Vector2(nextmove*2, rigid.velocity.y);
             }
             else        //notfollowPlayer도 0이고 followPlayer도 0이라면 기본 이동
             {
@@ -81,12 +83,14 @@ public class E1Move : MonoBehaviour
             if (frontRayHit.collider == null && downRayHit.collider == null)
             {
                 //멈췄다면 그대로
-                if (notfollowPlayer > 0);
+                if (notfollowPlayer > 0) {}
                 //플레이어를 따라가다 낭떠러지를 마주했다면 멈춤
                 else if (followPlayer)
                 {
                     notfollowPlayer = 0.001f;
-                    nextmove = player.transform.position.x>gameObject.transform.position.x?1:-1;
+                    nextmove = player.transform.position.x > gameObject.transform.position.x ? 1 : -1;
+                    CancelInvoke("Think");
+                    Invoke("Think", 5);
                 }
                 else Turn(); // 둘 다 감지되지 않을 때만 턴
             }
@@ -99,7 +103,7 @@ public class E1Move : MonoBehaviour
         CancelInvoke("Think");
         if (noMove == false)
         {
-            if (enemyBasicMove.isHit == false)
+            if (enemyBasicMove.onAir == false)
             {
                 //Set Next Active
                 nextmove = Random.Range(-1, 2); //최소~(최대-1) 의 랜덤 수 생성
@@ -155,11 +159,9 @@ public class E1Move : MonoBehaviour
         //플레이어가 범위 안에 없다면 따라가지 않음
         else
         {
-            followPlayer = false;
             if(notfollowPlayer == 0) Invoke("Think", 5);
         }
     }
-
 
     void Turn()
     {
@@ -173,6 +175,6 @@ public class E1Move : MonoBehaviour
     {
         //플레이어 따라가는 범위
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(gameObject.transform.position, new Vector3(12, 12, 0));
+        Gizmos.DrawWireCube(gameObject.transform.position, new Vector3(12, 12, 0));     //한 변의 길이, 감지는 오브젝트 중심이 기준이기에 범위를 6으로?
     }
 }

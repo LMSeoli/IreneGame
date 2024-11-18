@@ -10,6 +10,7 @@ TagManager:
   - Platform
   - bullet
   - out
+  - Relic
   layers:
   - Default
   - TransparentFX

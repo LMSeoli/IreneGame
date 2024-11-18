@@ -6,16 +6,18 @@ public class EnemyBasicMove : MonoBehaviour
 {
     Rigidbody2D rigid;
     public int health;
-    public bool isHit;
+    public bool onAir;
     public bool isBoss;
 
     public GameObject S3Airbone;
     public GameObject S3AttackArea;
     private List<EnemyBasicMove> detectedEnemies = new List<EnemyBasicMove>();
 
+    RelicManager relic;
     Animator anim;
     SpriteRenderer spriteRenderer;
     GameManager gameManager;
+    FawlbeastMove fawlbeastMove;
     new CapsuleCollider2D collider;
 
 
@@ -27,6 +29,21 @@ public class EnemyBasicMove : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         collider = GetComponent<CapsuleCollider2D>();
         gameManager = FindObjectOfType<GameManager>();
+        relic = FindObjectOfType<RelicManager>();
+        fawlbeastMove = FindObjectOfType<FawlbeastMove>();
+    }
+
+    private void FixedUpdate()
+    {
+        if(onAir == true && rigid.velocity.y <= 0)
+        {
+            Debug.DrawRay(rigid.position, Vector3.down, new UnityEngine.Color(0, 1, 0));         //에디터상에서 Ray를 그려주는 함수, color은 rgb 이용
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform")); //빔에 맞은 애에 대한 정보, 이 변수의 콜라이더로 검색 확인 가능
+            if (rayHit.collider != null && rayHit.distance < 0.6f)
+            {
+                onAir = false;
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -49,14 +66,15 @@ public class EnemyBasicMove : MonoBehaviour
     {
         //화면 진동 효과와
         //특수 피격 이펙트가 필요함
-
-        CancelInvoke("NotHit");
-        CancelInvoke("Return");
-        isHit = true;
+        if(onAir == true)
+        {
+            fawlbeastMove.FawlbeastAttack(transform);
+        }
+        onAir = true;
         rigid.velocity = Vector3.zero;
         //튕겨나가기
         int dirc = transform.position.x - player.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dirc, 1) * 2, ForceMode2D.Impulse);
+        rigid.AddForce(new Vector2(dirc, 1f) * 2, ForceMode2D.Impulse);
             //플레이어가 검으로 타격하며 전진할 경우, 적이 충분히 밀려나지 않아 피격당할 수 있음. 이를 해결하는 게 좋을까?
         //플레이어 S3게이지 채우기, 게임매니저로 넘기면 좋을 듯
         gameManager.S3CountUp();
@@ -73,10 +91,25 @@ public class EnemyBasicMove : MonoBehaviour
         spriteRenderer.color = new UnityEngine.Color(1, 1, 1, 0.4f); //rgb다음은 투명도!
 
         Invoke("Return", 0.3f);
-        Invoke("NotHit", 1f);
         //Animation
         //anim.SetTrigger("doDamaged");
         //Invoke("OffDamaged", 0.2f);
+    }
+
+    public void HpDown()
+    {
+        onAir = true;
+        gameManager.S3CountUp();
+        //체력 계산
+        health -= 1;
+        if (health <= 0)
+        {
+            rigid.velocity = Vector3.zero;
+            Dead();
+            return;
+        }
+        spriteRenderer.color = new UnityEngine.Color(1, 1, 1, 0.4f); //rgb다음은 투명도!
+        Invoke("Return", 0.3f);
     }
 
     public void S3Nominated()
@@ -97,38 +130,49 @@ public class EnemyBasicMove : MonoBehaviour
                 }
             }
         }
-        Debug.Log("3");
-
         // 감지된 모든 적들에게 S3Damaged 발동
         foreach (EnemyBasicMove enemy in detectedEnemies)
         {
             enemy.S3Damaged();
         }
-        Debug.Log("4");
     }
-
     public void S3Damaged()
     {
         Debug.Log("5");
         health -= 1;
+        fawlbeastMove.FawlbeastAttack(transform);
         spriteRenderer.color = new Color(1, 0, 0, 0.4f);
         Invoke("Return", 0.1f);
     }
+
+    public void CS3Hit()
+    {
+        rigid.velocity = Vector3.zero;
+        rigid.bodyType = RigidbodyType2D.Kinematic;
+        HpDown();
+        Invoke("Return", 0.5f);
+    }
+
+    public void CS4Hit()
+    {
+        onAir = true;
+        rigid.velocity = new Vector3 (0, 15, 0);
+        spriteRenderer.color = new Color(1, 0, 0, 0.4f);
+        Invoke("Return", 0.1f);
+    }    
 
     public void S1Hit(Vector3 S2End, int direction, float ShootDelay)
     {
         //이미 S2에서 띄우고 쏘는 걸 했으니까, 이걸 아이린 1스로 해버리면 너무 특색이 없어짐.
         //아예 총 난사해서 공중에 띄우는 거로?
-
-
     }
 
     public void S2Hit(Vector3 S2End, int direction, float ShootDelay)
     {
-        CancelInvoke("NotHit");
         //gameObject.layer = 12;        //현재는 playermove에서 처리
-        isHit = true;
+        onAir = true;
         rigid.velocity = Vector2.zero;
+        rigid.bodyType = RigidbodyType2D.Dynamic;
         Vector3 TS = this.gameObject.transform.position;
 
         float gravity = 12;     //현재 중력을 12로 설정해둠
@@ -150,8 +194,6 @@ public class EnemyBasicMove : MonoBehaviour
 
         // 직접 메서드 호출
         Invoke("Return", 2f);
-        Invoke("NotHit", 1f);
-        //}
     }
 
     public void S2Push(Vector3 S2End)
@@ -164,8 +206,8 @@ public class EnemyBasicMove : MonoBehaviour
     private IEnumerator S3Hit(Transform player)
     {
         Debug.Log("S3Hit started");
-        CancelInvoke("NotHit");
-        isHit = true;
+        CancelInvoke("Return");
+        onAir = true;
         rigid.velocity = Vector2.zero;
 
         float jumpDuration = 0.4f;
@@ -192,20 +234,15 @@ public class EnemyBasicMove : MonoBehaviour
             yield return null;
         }
         Invoke("Return", 0.3f);
-        Invoke("NotHit", 1f);
         Debug.Log("S3Hit complete");
     }
 
-
     void Return()
     {
+        //색과 레이어를 원래대로
         spriteRenderer.color = new Color(1, 1, 1);
         gameObject.layer = 6;
-    }
-
-    void NotHit()
-    {
-        isHit = false;
+        //rigid.bodyType = RigidbodyType2D.Dynamic;
     }
 
     public void Dead()
@@ -228,5 +265,18 @@ public class EnemyBasicMove : MonoBehaviour
     void DeActive()
     {
         gameObject.SetActive(false);
+    }
+
+    void FawlbeastShotCheck()
+    {
+        if (onAir == true)
+        {
+            fawlbeastMove.FawlbeastAttack(transform);
+        }
+        /*if(relic.RelicItems.Exists(item => item.isOwned && item.itemName == "Health Reduction") && onAir==true)
+        {
+            //fawlBeast.target(gameObject);
+            //
+        }*/
     }
 }

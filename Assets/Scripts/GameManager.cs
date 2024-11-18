@@ -13,22 +13,23 @@ public class GameManager : MonoBehaviour
     public AudioClip audioSlideIn;
     public AudioClip audioBackSong1;
 
-    public int totalPoint;
+    public int totalPoint;                                  //점수 관리는 여기에서
     public int stagePoint;
     public int stageIndex;
+    public int maxHealth;                                   //체력 관리는 여기에서
     public int health;
-    public int bullet;
+    public int bullet;                                      //탄환 관리는 여기에서
     public PlayerMove player;
     public GameObject[] Stages;
 
-    public Image[] UIHealth;
+    public Image UIHealth;
     public Image[] UIBullet;
     public TextMeshProUGUI UIPoint;
     public TextMeshProUGUI UIStage;
     public TextMeshProUGUI ScriptTxt;
     public TextMeshProUGUI S1CoolTxt;           //
     public TextMeshProUGUI S2CoolTxt;           //
-    public TextMeshProUGUI S3CoolTxt;           //테스트 시엔 일단 텍스트로 표시
+    public TextMeshProUGUI S3CoolTxt;           //테스트 시엔 일단 텍스트로 표시?
     public GameObject GameCamera;
     public GameObject UIRestartBtn;
 
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
         cameraMove = GameCamera.GetComponent<CameraMove>();
         audioSource = gameObject.GetComponent<AudioSource>();
         player = FindObjectOfType<PlayerMove>();
-        //PlaySound("BackSong1");
+        PlaySound("BackSong1");
     }
 
     private void Update()
@@ -77,8 +78,8 @@ public class GameManager : MonoBehaviour
 
     public void HealthDown()
     {
-        UIHealth[health - 1].color = new Color(1, 0, 0, 0.4f);
         health--;
+        UIHealth.fillAmount = (float)health/maxHealth;        //왜 -1을 넣어줘야 제대로 작동 됨????
         if (health < 1)
         {
             UIRestartBtn.SetActive(true);
@@ -150,6 +151,16 @@ public class GameManager : MonoBehaviour
         audioSource.PlayOneShot(audioSlideIn);
         //player.isReload = false;
         player.isSkill = false;
+    }
+
+    public void ReloadAll()
+    {
+        int bulLeft = bullet;
+        for (int i = 0; bullet<6; i++) {
+            UIBullet[bulLeft+i].color = new Color(1, 1, 1, 1);
+            Debug.Log(bullet);
+            bullet++;
+        }
     }
 
     public void PlayerReposition()

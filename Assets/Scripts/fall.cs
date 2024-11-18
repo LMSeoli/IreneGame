@@ -14,8 +14,8 @@ public class fall : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            GM.UIHealth[GM.health - 1].color = new Color(1, 0, 0, 0.4f);
             GM.health--;
+            GM.UIHealth.fillAmount = (float)GM.health/GM.maxHealth;
             //다시 돌려놓기
             if (GM.health > 0)
                 GM.PlayerReposition();

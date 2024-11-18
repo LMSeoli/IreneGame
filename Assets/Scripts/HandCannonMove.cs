@@ -28,22 +28,19 @@ public class HandCannonMove : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
     }
 
-    public void Shot(bool dir)
+    public void NormalShot(bool dir, Vector3 targetDirection)
     {
         CancelInvokeLog("disable");
         PlaySound("Shot");
         spriteRenderer.flipY = dir;
-        transform.position = new Vector2(Player.transform.position.x + (dir?-0.4f:0.4f), Player.transform.position.y);
-        transform.rotation = Quaternion.Euler(0,0,dir?180:0);
+        //transform.position = new Vector2(Player.transform.position.x + (dir?-0.4f:0.4f), Player.transform.position.y);
+        float angle = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg; // 방향 벡터의 각도 계산
+        transform.rotation = Quaternion.Euler(0, 0, angle); // Z축 기준으로 회전
 
         GameObject bullet = Instantiate(bulletObject, transform.position, transform.rotation);  //각도도 맞춰진다?!!
         bullet.SetActive(true);
         BulletMove bulletMove = bullet.GetComponent<BulletMove>();
         bulletMove.NormalShot();
-        //총알로부터 리지드바디 2D 컴포넌트 가져옴
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-
-        //총알을 전방으로 발사
         Invoke("disable", ShotDelay);
     }
 
@@ -71,7 +68,7 @@ public class HandCannonMove : MonoBehaviour
         PlaySound("Shot");
         float angle = Mathf.Atan2(ShootDirection.y, ShootDirection.x) * Mathf.Rad2Deg; // 방향 벡터의 각도 계산
         transform.rotation = Quaternion.Euler(0, 0, angle);
-        spriteRenderer.flipY = dir; 
+        spriteRenderer.flipY = (angle > 90 || angle <= -90) ? true : false;
         GameObject bullet = Instantiate(bulletObject, transform.position, transform.rotation);
         bullet.SetActive(true);
         BulletMove bulletMove = bullet.GetComponent<BulletMove>();
@@ -106,6 +103,7 @@ public class HandCannonMove : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, dir ? 45 : 135);
         //총알 발사
         PlaySound("S2Shot");
+        gameManager.BulletDown();
         GameObject bullet = Instantiate(bulletObject, transform.position, transform.rotation);  //각도도 맞춰진다?!!
         bullet.SetActive(true);
         CapsuleCollider2D bulletCollider = bullet.GetComponent<CapsuleCollider2D>();
