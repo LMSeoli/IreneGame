@@ -16,7 +16,7 @@ public class GliderMove : MonoBehaviour
     GameManager gameManager;
     new CapsuleCollider2D collider;
     EnemyBasicMove enemyBasicMove;
-
+    RelicManager relicManager;
 
     //처음1회실행
     void Awake()
@@ -27,6 +27,7 @@ public class GliderMove : MonoBehaviour
         collider = GetComponent<CapsuleCollider2D>();
         gameManager = FindObjectOfType<GameManager>();
         enemyBasicMove = gameObject.GetComponent<EnemyBasicMove>();
+        relicManager = FindObjectOfType<RelicManager>();
         Think();
         Invoke("Think", 5); //주어진 시간이 지난 뒤, 지정된 함수를 실행하는 함수
     }
@@ -41,7 +42,7 @@ public class GliderMove : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (enemyBasicMove.onAir == false && noMove == false)
+        if (enemyBasicMove.onAir == false && noMove == false && rigid.bodyType != RigidbodyType2D.Kinematic)
         {
             //기본 움직임
             if (notfollowPlayer > 0)
@@ -51,12 +52,13 @@ public class GliderMove : MonoBehaviour
             else if (followPlayer)
             {
                 nextmove = player.transform.position.x > gameObject.transform.position.x ? 1 : -1;
-                rigid.velocity = new Vector2(nextmove * 2, rigid.velocity.y);
+                rigid.velocity = new Vector2(nextmove*enemyBasicMove.moveSpeed, rigid.velocity.y);
             }
             else        //notfollowPlayer도 0이고 followPlayer도 0이라면 기본 이동
             {
-                rigid.velocity = new Vector2(nextmove * 2, rigid.velocity.y);
+                rigid.velocity = new Vector2(nextmove*enemyBasicMove.moveSpeed, rigid.velocity.y);
             }
+            //(relicManager.RelicItems.Exists(item => item.isOwned && item.number == 2) ? 0.8f : 1)
 
             //플랫폼 체크
             Vector2 frontVec = new Vector2(rigid.position.x + nextmove * 0.3f, rigid.position.y);

@@ -13,7 +13,7 @@ public class BeastAttack : MonoBehaviour
             Rigidbody2D enemyRigid = enemy.GetComponent<Rigidbody2D>();
             if(enemyRigid.bodyType != RigidbodyType2D.Kinematic) enemyRigid.velocity = new Vector2 (transform.position.x > enemy.transform.position.x ?-3:3, 3);
             EnemyBasicMove enemyMove = enemy.GetComponent<EnemyBasicMove>();
-            enemyMove.HpDown();
+            enemyMove.HpDown(2);
             SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
             Destroy(gameObject);
         }

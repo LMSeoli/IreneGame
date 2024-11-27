@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class EnemyBasicMove : MonoBehaviour
 {
+    //체력, 속도같은 보편적이고 기본적인 요소들은 여기에 설정해두어야 범용성, 통일성 덕에 여러가지 조정이 편해짐
+    //일단 속도, 공격력같은 
+    //외부에 작용받지 않는 것만 개별 적들의 코드에 있으면 좋을 거 같음
     Rigidbody2D rigid;
-    public int health;
+    public float health;
+    public float basicMoveSpeed=2;
+    public float moveSpeed=2;
+    public float basicAtk=10;
+    public float atk=10;
     public bool onAir;
     public bool isBoss;
 
@@ -13,13 +20,17 @@ public class EnemyBasicMove : MonoBehaviour
     public GameObject S3AttackArea;
     private List<EnemyBasicMove> detectedEnemies = new List<EnemyBasicMove>();
 
+    //유물효과 관련
+    public bool isSlowed;
+    public Coroutine slowCoroutine;
+
+
     RelicManager relic;
     Animator anim;
     SpriteRenderer spriteRenderer;
     GameManager gameManager;
-    FawlbeastMove fawlbeastMove;
+    public FawlbeastMove fawlbeastMove;
     new CapsuleCollider2D collider;
-
 
     //처음1회실행
     void Awake()
@@ -30,7 +41,6 @@ public class EnemyBasicMove : MonoBehaviour
         collider = GetComponent<CapsuleCollider2D>();
         gameManager = FindObjectOfType<GameManager>();
         relic = FindObjectOfType<RelicManager>();
-        fawlbeastMove = FindObjectOfType<FawlbeastMove>();
     }
 
     private void FixedUpdate()
@@ -56,21 +66,18 @@ public class EnemyBasicMove : MonoBehaviour
         {
             StartCoroutine(S3Hit(collision.gameObject.transform));
         }
-        if (collision.gameObject.layer == 16)
-        {
-            OnDamaged(collision.transform.position);
-        }
     }
 
-    public void OnDamaged(Vector3 player)
+    public void OnDamaged(Vector3 player, float damage)
     {
         //화면 진동 효과와
         //특수 피격 이펙트가 필요함
-        if(onAir == true)
+        if(onAir == true && FindObjectOfType<RelicManager>().RelicItems.Exists(item => item.isOwned && item.number == 3))
         {
             fawlbeastMove.FawlbeastAttack(transform);
         }
         onAir = true;
+        gameObject.layer = 14;
         rigid.velocity = Vector3.zero;
         //튕겨나가기
         int dirc = transform.position.x - player.x > 0 ? 1 : -1;
@@ -96,12 +103,13 @@ public class EnemyBasicMove : MonoBehaviour
         //Invoke("OffDamaged", 0.2f);
     }
 
-    public void HpDown()
+    public void HpDown(float damage)
     {
         onAir = true;
+        gameObject.layer = 14;
         gameManager.S3CountUp();
         //체력 계산
-        health -= 1;
+        health -= damage;
         if (health <= 0)
         {
             rigid.velocity = Vector3.zero;
@@ -139,7 +147,7 @@ public class EnemyBasicMove : MonoBehaviour
     public void S3Damaged()
     {
         Debug.Log("5");
-        health -= 1;
+        health -= 1;                                                 //체력 감소량 조정 필요
         fawlbeastMove.FawlbeastAttack(transform);
         spriteRenderer.color = new Color(1, 0, 0, 0.4f);
         Invoke("Return", 0.1f);
@@ -147,15 +155,17 @@ public class EnemyBasicMove : MonoBehaviour
 
     public void CS3Hit()
     {
+        onAir = true;
         rigid.velocity = Vector3.zero;
         rigid.bodyType = RigidbodyType2D.Kinematic;
-        HpDown();
+        HpDown(5);
         Invoke("Return", 0.5f);
     }
 
     public void CS4Hit()
     {
         onAir = true;
+        rigid.bodyType = RigidbodyType2D.Dynamic;
         rigid.velocity = new Vector3 (0, 15, 0);
         spriteRenderer.color = new Color(1, 0, 0, 0.4f);
         Invoke("Return", 0.1f);
@@ -243,6 +253,10 @@ public class EnemyBasicMove : MonoBehaviour
         spriteRenderer.color = new Color(1, 1, 1);
         gameObject.layer = 6;
         //rigid.bodyType = RigidbodyType2D.Dynamic;
+    }
+    public void Dynamic()
+    {
+        rigid.bodyType = RigidbodyType2D.Dynamic;
     }
 
     public void Dead()

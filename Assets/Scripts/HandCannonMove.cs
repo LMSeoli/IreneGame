@@ -44,6 +44,22 @@ public class HandCannonMove : MonoBehaviour
         Invoke("disable", ShotDelay);
     }
 
+    public void PierceShot(bool dir, Vector3 targetDirection)
+    {
+        CancelInvokeLog("disable");
+        PlaySound("Shot");
+        spriteRenderer.flipY = dir;
+        //transform.position = new Vector2(Player.transform.position.x + (dir?-0.4f:0.4f), Player.transform.position.y);
+        float angle = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg; // 방향 벡터의 각도 계산
+        transform.rotation = Quaternion.Euler(0, 0, angle); // Z축 기준으로 회전
+
+        GameObject bullet = Instantiate(bulletObject, transform.position, transform.rotation);  //각도도 맞춰진다?!!
+        bullet.SetActive(true);
+        BulletMove bulletMove = bullet.GetComponent<BulletMove>();
+        bulletMove.S2Shot();
+        Invoke("disable", ShotDelay);
+    }
+
     public void S1Shoot(bool dir, Vector3 ShootDirection)
     {
         /*CancelInvokeLog("disable");               //난사 코드
@@ -89,18 +105,29 @@ public class HandCannonMove : MonoBehaviour
 
     private IEnumerator S2RotateOverTime(float ShootTime, bool dir)
     {
+        float stopDuration = 0.1f;  // 멈추는 시간
+        float rotationDuration = ShootTime - stopDuration;  // 회전 시간
+
         float startTime = Time.time;  // 코루틴 시작 시점의 시간을 기록
-        float endTime = startTime + ShootTime;  // 종료 시간 계산
-        float rotationSpeed = 360f / ShootTime;  // 한 바퀴를 도는 속도
+        float endTime = startTime + rotationDuration;  // 종료 시간 계산
+        float initialRotationSpeed = 360f / rotationDuration;  // 시작 회전 속도
+        float finalRotationSpeed = 0f;  // 감속 후 최종 회전 속도 (0으로 멈춤)
 
         while (Time.time < endTime)
         {
             float elapsedTime = Time.time - startTime;  // 경과 시간 계산
-            float deltaRotation = rotationSpeed * Time.deltaTime * 8;  // 프레임 당 회전량 계산
+            float t = elapsedTime / rotationDuration;  // 0에서 1로 변하는 비율
+            float currentRotationSpeed = Mathf.Lerp(initialRotationSpeed, finalRotationSpeed, t);  // 선형 보간으로 회전 속도 계산
+            float deltaRotation = currentRotationSpeed * Time.deltaTime * 8;  // 프레임 당 회전량 계산
             transform.Rotate(0, 0, deltaRotation);  // 오브젝트 회전
             yield return null;
         }
         transform.rotation = Quaternion.Euler(0, 0, dir ? 45 : 135);
+
+        // 멈추는 상태 유지
+        yield return new WaitForSeconds(stopDuration);
+
+        // 최종 회전 상태 설정
         //총알 발사
         PlaySound("S2Shot");
         gameManager.BulletDown();

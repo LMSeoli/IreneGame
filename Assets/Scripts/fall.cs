@@ -14,7 +14,7 @@ public class fall : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            GM.health--;
+            GM.health -= 20;
             GM.UIHealth.fillAmount = (float)GM.health/GM.maxHealth;
             //다시 돌려놓기
             if (GM.health > 0)
